@@ -2,20 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: 'Soria';
+  src: url('/fonts/soria-font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Soria', sans-serif; /* Define la fuente como predeterminada */
+}
+
+p {
+  font-family: 'Arial', sans-serif;
+}
+
+.swiper {
+  width: 100%;
+  height: auto;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mySwiper .swiper-pagination-bullet {
+  background-color: #ff5733; /* Color personalizado */
+  opacity: 0.7;
+}
+
+.mySwiper .swiper-pagination-bullet-active {
+  background-color: #c70039; /* Color activo */
+  opacity: 1;
+}
+
+.swiper-slide img {
+  object-fit: cover; /* Asegura que la imagen se recorte perfectamente */
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reviews-section {
+  background-image: url('/images/google-reviews-logo.png');
+  background-repeat: no-repeat; /* Evita que la imagen de fondo se repita */
+  background-position: bottom right; /* Posiciona la imagen en la esquina inferior derecha */
+  background-size: 100px auto; /* Ajusta el tamaño de la imagen; 100px de ancho y altura automática */
+  transition: opacity 0.3s ease-in-out;
 }

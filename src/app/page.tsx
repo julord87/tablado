@@ -1,101 +1,144 @@
-import Image from "next/image";
+import { Metadata } from "next";
+import { ReviewsCarousel } from "../../components/Reviews";
+import Gastronomy from "../../components/Gastronomy";
+
+// Metadata global para SEO y accesibilidad
+export const metadata: Metadata = {
+  title: "Tablao Flamenco Las Setas",
+  description:
+    "Vive el flamenco más auténtico en Sevilla. Reserva tu entrada y disfruta de un espectáculo inolvidable.",
+  keywords: "flamenco Sevilla, espectáculo flamenco, tablao Las Setas",
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className="font-soria text-gray-800">
+      {/* Hero Section */}
+      <section className="relative flex flex-col items-center justify-center h-screen bg-cover bg-center bg-[url('/images/hero.jpg')] text-yellow-500">
+        <h1 className="text-4xl md:text-6xl font-bold text-center drop-shadow-lg text-">
+          Vive el Flamenco en el Corazón de Sevilla
+        </h1>
+        <h2 className="mt-4 text-xl md:text-2xl text-center">
+          Una experiencia diferente y única en el corazón del barrio de La
+          Macarena
+        </h2>
+        <button className="mt-8 px-6 py-3 bg-red-600 text-white font-medium text-lg rounded-md shadow-lg hover:bg-red-700">
+          Reserva tu entrada
+        </button>
+      </section>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Show Details Section */}
+      <section id="espectaculo" className="py-16 bg-neutral-900 text-center">
+        <h2 className="text-3xl font-bold text-yellow-700">
+          Sobre el Espectáculo
+        </h2>
+        <p className="mt-4 text-lg text-neutral-400 max-w-2xl mx-auto">
+          Descubre la magia del flamenco con 8 artistas en escena, tres pases
+          diarios y una ubicación privilegiada en Las Setas de Sevilla.
+        </p>
+        <ul className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <li className="p-6 bg-neutral-900 rounded-md shadow-md">
+            <h3 className="text-xl text-yellow-700 font-semibold">Horarios</h3>
+            <p className="text-neutral-400 ">
+              Todos los días: 18:00, 19:45, y 21:30
+            </p>
+          </li>
+          <li className="p-6 bg-neutral-900 rounded-md shadow-md">
+            <h3 className="text-xl text-yellow-700 font-semibold">Artistas</h3>
+            <p className="text-neutral-400 ">
+              Baile, cante y guitarra con artistas de renombre.
+            </p>
+          </li>
+          <li className="p-6 bg-neutral-900 rounded-md shadow-md">
+            <h3 className="text-xl text-yellow-700 font-semibold">Duración</h3>
+            <p className="text-neutral-400 ">
+              1 hora y media con un descanso de 10 minutos.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      {/* Booking Section */}
+      <section id="entradas" className="py-16 text-center bg-stone-200">
+        <h2 className="text-3xl font-bold">Reserva tus Entradas</h2>
+        <p className="mt-4 text-lg">
+          Selecciona la fecha y horario para tu experiencia flamenca.
+        </p>
+        <div className="mt-8 flex justify-center">
+          <button className="px-8 py-3 bg-red-600 text-white font-medium text-lg rounded-md shadow-lg hover:bg-red-700">
+            Calendario
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      {/* Gastronomy Section */}
+      <Gastronomy />
+
+      {/* Reviews Section */}
+      <ReviewsCarousel />
+
+      {/* Contact and Location Section */}
+      <section
+        id="contacto-ubicacion"
+        className="py-16 bg-neutral-900 text-white"
+      >
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Contact Form */}
+          <div className="text-center md:text-left">
+            <h2 className="text-3xl text-center font-bold text-yellow-700">Contáctanos</h2>
+            <p className="mt-4 text-lg text-neutral-400">
+              ¿Tienes dudas? Escríbenos y te responderemos rápidamente.
+            </p>
+            <form className="mt-8">
+              <input
+                type="text"
+                placeholder="Nombre"
+                className="w-full p-4 mb-4 border border-gray-700 bg-neutral-800 rounded-md text-white"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full p-4 mb-4 border border-gray-700 bg-neutral-800 rounded-md text-white"
+              />
+              <textarea
+                placeholder="Mensaje"
+                rows={4}
+                className="w-full p-4 mb-4 border border-gray-700 bg-neutral-800 rounded-md text-white"
+              ></textarea>
+              <button className="w-full px-6 py-3 bg-red-600 text-white font-medium text-lg rounded-md shadow-lg hover:bg-red-700">
+                Enviar
+              </button>
+            </form>
+          </div>
+
+          {/* Location */}
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-yellow-700">Ubicación</h2>
+            <p className="mt-4 text-lg text-neutral-400">
+              Encuéntranos en el corazón del barrio de La Macarena, Sevilla.
+            </p>
+            <div className="mt-8">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3171.498594024361!2d-5.993784825243408!3d37.39710467982616!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd126d42e2b5fd49%3A0x8f6dfde6b40eabc6!2sC.%20Feria%2C%2031%2C%20bajo%2C%20Casco%20Antiguo%2C%2041003%20Sevilla%2C%20Espa%C3%B1a!5e0!3m2!1ses!2sus!4v1618323217657!5m2!1ses!2sus"
+                width="100%"
+                height="300"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                className="rounded-lg shadow-lg"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 bg-neutral-900 text-white text-center">
+        <p className="text-sm">
+          &copy; {new Date().getFullYear()} Tablao Flamenco La Jacinta. Todos
+          los derechos reservados.
+        </p>
       </footer>
-    </div>
+    </main>
   );
 }
