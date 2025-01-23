@@ -26,5 +26,5 @@ export default function Gastronomy() {
           </div>
         </div>
       </section>
-    );
+    )
   }
