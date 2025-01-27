@@ -19,8 +19,7 @@ export default function Home() {
           Vive el Flamenco en el Corazón de Sevilla
         </h1>
         <h2 className="mt-4 text-xl md:text-2xl text-center">
-          Una experiencia diferente y única en el corazón del barrio de La
-          Macarena
+          Una experiencia diferente y única en el corazón de Sevilla
         </h2>
         <button className="mt-8 px-6 py-3 bg-red-600 text-white font-medium text-lg rounded-md shadow-lg hover:bg-red-700">
           Reserva tu entrada
@@ -85,7 +84,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Form */}
           <div className="text-center md:text-left">
-            <h2 className="text-3xl text-center font-bold text-yellow-700">Contáctanos</h2>
+            <h2 className="text-3xl text-center font-bold text-yellow-700 ">Contáctanos</h2>
             <p className="mt-4 text-lg text-neutral-400">
               ¿Tienes dudas? Escríbenos y te responderemos rápidamente.
             </p>
@@ -115,7 +114,7 @@ export default function Home() {
           <div className="text-center">
             <h2 className="text-3xl font-bold text-yellow-700">Ubicación</h2>
             <p className="mt-4 text-lg text-neutral-400">
-              Encuéntranos en el corazón del barrio de La Macarena, Sevilla.
+              Encuéntranos en el corazón de Sevilla.
             </p>
             <div className="mt-8">
               <iframe
