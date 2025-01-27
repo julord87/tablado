@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { ReviewsCarousel } from "../../components/Reviews";
 import Gastronomy from "../../components/Gastronomy";
+import PhotoGallery from "../../components/Gallery";
 
 // Metadata global para SEO y accesibilidad
 export const metadata: Metadata = {
@@ -76,33 +77,36 @@ export default function Home() {
       {/* Reviews Section */}
       <ReviewsCarousel />
 
+      {/* Photo Gallery Section */}
+      <PhotoGallery />
+
       {/* Contact and Location Section */}
       <section
         id="contacto-ubicacion"
-        className="py-16 bg-neutral-900 text-white"
+        className="py-16 bg-stone-200 text-white"
       >
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Form */}
           <div className="text-center md:text-left">
-            <h2 className="text-3xl text-center font-bold text-yellow-700 ">Contáctanos</h2>
-            <p className="mt-4 text-lg text-neutral-400">
+            <h2 className="text-3xl text-center font-bold text-neutral-900 ">Contáctanos</h2>
+            <p className="mt-4 text-lg text-neutral-900">
               ¿Tienes dudas? Escríbenos y te responderemos rápidamente.
             </p>
             <form className="mt-8">
               <input
                 type="text"
                 placeholder="Nombre"
-                className="w-full p-4 mb-4 border border-gray-700 bg-neutral-800 rounded-md text-white"
+                className="w-full p-4 mb-4 border border-gray-400 bg-neutral-300 rounded-md text-neutral-900"
               />
               <input
                 type="email"
                 placeholder="Email"
-                className="w-full p-4 mb-4 border border-gray-700 bg-neutral-800 rounded-md text-white"
+                className="w-full p-4 mb-4 border border-gray-400 bg-neutral-300 rounded-md text-neutral-900"
               />
               <textarea
                 placeholder="Mensaje"
                 rows={4}
-                className="w-full p-4 mb-4 border border-gray-700 bg-neutral-800 rounded-md text-white"
+                className="w-full p-4 mb-4 border border-gray-400 bg-neutral-300 rounded-md text-neutral-900"
               ></textarea>
               <button className="w-full px-6 py-3 bg-red-600 text-white font-medium text-lg rounded-md shadow-lg hover:bg-red-700">
                 Enviar
@@ -112,8 +116,8 @@ export default function Home() {
 
           {/* Location */}
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-yellow-700">Ubicación</h2>
-            <p className="mt-4 text-lg text-neutral-400">
+            <h2 className="text-3xl font-bold text-neutral-900">Ubicación</h2>
+            <p className="mt-4 text-lg text-neutral-900">
               Encuéntranos en el corazón de Sevilla.
             </p>
             <div className="mt-8">
