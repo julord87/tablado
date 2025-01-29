@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { ReviewsCarousel } from "../../components/Reviews";
 import Gastronomy from "../../components/Gastronomy";
 import PhotoGallery from "../../components/Gallery";
+import HeroSection from "../../components/HeroSection";
 
 // Metadata global para SEO y accesibilidad
 export const metadata: Metadata = {
@@ -12,20 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+
   return (
     <main className="font-soria text-gray-800">
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center h-screen bg-cover bg-center bg-[url('/images/hero.jpg')] text-yellow-500">
-        <h1 className="text-4xl md:text-6xl font-bold text-center drop-shadow-lg text-">
-          Vive el Flamenco en el Corazón de Sevilla
-        </h1>
-        <h2 className="mt-4 text-xl md:text-2xl text-center">
-          Una experiencia diferente y única en el corazón de Sevilla
-        </h2>
-        <button className="mt-8 px-6 py-3 bg-red-600 text-white font-medium text-lg rounded-md shadow-lg hover:bg-red-700">
-          Reserva tu entrada
-        </button>
-      </section>
+      <HeroSection />
 
       {/* Show Details Section */}
       <section id="espectaculo" className="py-16 bg-neutral-900 text-center">
