@@ -57,3 +57,10 @@ p {
   background-size: 100px auto; /* Ajusta el tamaño de la imagen; 100px de ancho y altura automática */
   transition: opacity 0.3s ease-in-out;
 }
+
+section[data-open="true"] {
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
