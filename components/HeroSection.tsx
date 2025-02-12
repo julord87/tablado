@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import BookingModal from "./BookingModal";
+import Modal from "./BookingModal"; // Asegúrate de que el nombre del archivo es correcto
 
 const HeroSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  console.log("Estado del modal:", isModalOpen);
 
   return (
     <>
@@ -26,10 +24,16 @@ const HeroSection = () => {
       </section>
 
       {/* Modal de reserva */}
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h2 className="text-2xl font-bold">Reserva tu Entrada</h2>
+        <p className="mt-4">Selecciona la fecha y confirma tu reserva.</p>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="mt-6 px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+        >
+          Cerrar
+        </button>
+      </Modal>
     </>
   );
 };

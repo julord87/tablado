@@ -1,93 +1,44 @@
-"use client";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-
-interface BookingModalProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  children: React.ReactNode;
 }
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
-  return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onClose}
-      backdrop="blur" // Fondo desenfocado
-      className="fixed inset-0 flex items-center justify-center z-[9999] bg-black/50" // Fondo translúcido detrás del modal
-    >
-      <ModalContent
-        className="relative bg-white rounded-2xl shadow-xl p-6 max-w-md w-full mx-auto"
-        style={{ backgroundColor: "white" }} // Forzamos el color blanco por estilos en línea
-      >
-        <ModalHeader
-          className="text-xl font-bold text-gray-900 border-b pb-2"
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+  const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const root = document.getElementById("modal-root");
+    if (!root) {
+      const newRoot = document.createElement("div");
+      newRoot.id = "modal-root";
+      document.body.appendChild(newRoot);
+      setModalRoot(newRoot);
+    } else {
+      setModalRoot(root);
+    }
+  }, []);
+
+  if (!isOpen || !modalRoot) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-[10000]">
+      <div className="bg-white text-black p-6 w-full max-w-md rounded-lg shadow-lg relative border border-gray-300">
+        {/* Botón de Cerrar */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
         >
-          Reserva tu Entrada
-        </ModalHeader>
-        <ModalBody className="mt-4 text-gray-600">
-          <p>Selecciona la fecha y horario para tu experiencia flamenca.</p>
-          <form className="mt-4 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Fecha
-              </label>
-              <input
-                type="date"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Horario
-              </label>
-              <select
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
-                required
-              >
-                <option value="">Selecciona un horario</option>
-                <option value="18:00">18:00</option>
-                <option value="19:45">19:45</option>
-                <option value="21:30">21:30</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Número de Entradas
-              </label>
-              <input
-                type="number"
-                min="1"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
-                defaultValue="1"
-                required
-              />
-            </div>
-          </form>
-        </ModalBody>
-        <ModalFooter className="flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Confirmar
-          </button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+          &times;
+        </button>
+        {children}
+      </div>
+    </div>,
+    modalRoot
   );
 };
 
-export default BookingModal;
+export default Modal;
