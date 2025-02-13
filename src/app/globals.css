@@ -62,10 +62,17 @@ p, label, input {
 }
 
 section[data-open="true"] {
-  position: fixed !important;
+  position: relative !important;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* globals.css */
+.hero-bg {
+  background-image: url('/images/hero.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 /* Agregar en globals.css */
@@ -90,10 +97,16 @@ section[data-open="true"] {
 
 #modal-root {
   position: fixed;
-  z-index: 10000 !important;
+  z-index: -1; /* Mantenerlo en el fondo cuando no esté en uso */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none; /* Evita que bloquee la interacción */
+}
+
+.modal-open {
+  z-index: 999999 !important; /* Asegura que el modal se muestre */
+  pointer-events: all; /* Permite interacción cuando está activo */
 }
 

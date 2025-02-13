@@ -11,16 +11,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    const root = document.getElementById("modal-root");
-    if (!root) {
-      const newRoot = document.createElement("div");
-      newRoot.id = "modal-root";
-      document.body.appendChild(newRoot);
-      setModalRoot(newRoot);
-    } else {
+    if (isOpen) {
+      let root = document.getElementById("modal-root");
+      if (!root) {
+        root = document.createElement("div");
+        root.id = "modal-root";
+        document.body.appendChild(root);
+      }
       setModalRoot(root);
+    } else {
+      setModalRoot(null);
     }
-  }, []);
+  }, [isOpen]);
 
   if (!isOpen || !modalRoot) return null;
 

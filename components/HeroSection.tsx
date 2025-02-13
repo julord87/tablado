@@ -8,7 +8,7 @@ const HeroSection = () => {
 
   return (
     <>
-      <section className="relative flex flex-col items-center justify-center h-screen bg-cover bg-center bg-[url('/images/hero.jpg')] text-yellow-500 overflow-hidden">
+      <section className="relative flex flex-col items-center justify-center h-screen hero-bg text-yellow-500 overflow-hidden">
         <h1 className="text-4xl md:text-6xl font-bold text-center drop-shadow-lg">
           Vive el Flamenco en el Corazón de Sevilla
         </h1>
