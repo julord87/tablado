@@ -25,14 +25,36 @@ const HeroSection = () => {
 
       {/* Modal de reserva */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-2xl font-bold">Reserva tu Entrada</h2>
-        <p className="mt-4">Selecciona la fecha y confirma tu reserva.</p>
-        <button
-          onClick={() => setIsModalOpen(false)}
-          className="mt-6 px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-        >
-          Cerrar
-        </button>
+        <h2 className="text-4xl font-bold text-center mb-4">
+          Reserva tu Entrada
+        </h2>
+        <p className="text-center text-gray-700">
+          Selecciona la fecha y confirma tu reserva.
+        </p>
+
+        {/* Selector de fecha */}
+        <div className="mt-4">
+          <input
+            type="date"
+            className="w-full p-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
+
+        <p className="mt-4 text-center text-gray-700">Selecciona la función.</p>
+
+        {/* Selector de horario */}
+        <select className="w-full p-2 mt-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-red-500">
+          <option value="1">18:00 hs</option>
+          <option value="2">19:45 hs</option>
+          <option value="3">21:30 hs</option>
+        </select>
+
+        {/* Botones */}
+        <div className="flex items-center justify-center mt-6 p-4">
+          <button className="bg-red-600 text-white text-xl rounded-md hover:bg-red-700 p-4">
+            Confirmar
+          </button>
+        </div>
       </Modal>
     </>
   );

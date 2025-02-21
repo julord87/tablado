@@ -32,7 +32,7 @@ export default function Home() {
           <li className="p-6 bg-neutral-900 rounded-md shadow-md">
             <h3 className="text-xl text-yellow-700 font-semibold">Horarios</h3>
             <p className="text-neutral-400 ">
-              Todos los días: 18:00, 19:45, y 21:30
+              De jueves a domingos: 18:00, 19:45, y 21:30
             </p>
           </li>
           <li className="p-6 bg-neutral-900 rounded-md shadow-md">
