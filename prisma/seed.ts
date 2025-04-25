@@ -22,8 +22,8 @@ export const initialData: SeedData = {
   ticketTypes: [
     {
       id: 1,
-      name: "Simple",
-      price: 20.0,
+      name: "Simple con bebida",
+      price: 25.0,
       description: "Entrada con una bebida incluida",
       createdAt: new Date(),
       updatedAt: new Date(),
