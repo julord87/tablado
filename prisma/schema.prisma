@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Show {
+  id          Int           @id @default(autoincrement())
+  date        DateTime
+  time        String // Podés usar enum si tenés horarios fijos
+  capacity    Int // Capacidad total para ese horario
+  tickets     Ticket[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Reservation Reservation[]
+
+  @@unique([date, time])
+}
+
+model TicketType {
+  id          Int           @id @default(autoincrement())
+  name        String // Ej: 'Simple', 'Con tapa y bebida'
+  price       Float
+  description String?
+  tickets     Ticket[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Reservation Reservation[]
+}
+
+model Ticket {
+  id            Int      @id @default(autoincrement())
+  showId        Int
+  typeId        Int
+  customerName  String
+  customerEmail String
+  createdAt     DateTime @default(now())
+
+  type TicketType @relation(fields: [typeId], references: [id])
+  show Show       @relation(fields: [showId], references: [id])
+}
+
+model Reservation {
+  id            Int      @id @default(autoincrement())
+  showId        Int
+  typeId        Int
+  customerName  String
+  customerEmail String
+  createdAt     DateTime @default(now())
+
+  type TicketType @relation(fields: [typeId], references: [id])
+  show Show       @relation(fields: [showId], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
