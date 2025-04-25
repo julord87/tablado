@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 interface SeedTicketType {
   id: number;
   name: string;
@@ -38,16 +40,16 @@ export const initialData: SeedData = {
     },
   ],
 
-  users: [
-    {
-      name: "Julián",
-      password: "0831",
-      email: "julianmgtb@gmail.com",
-    },
-    {
-      name: "Valeria",
-      password: "1970",
-      email: "valemar1970@gmil.com",
-    },
-  ],
+  // users: [
+  //   {
+  //     name: "Julián",
+  //     email: "julianmgtb@gmail.com",
+  //     password: await bcrypt.hash("0831", 10),
+  //   },
+  //   {
+  //     name: "Valeria",
+  //     email: "valemar1970@gmil.com",
+  //     password: await bcrypt.hash("1970", 10),
+  //   },
+  // ],
 };
