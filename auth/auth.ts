@@ -1,11 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { type AuthOptions } from "next-auth"; // <-- importamos el tipo AuthOptions
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma/lib/prisma"; // <-- importamos el prisma
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
-
-export const authOptions = {
+export const authOptions: AuthOptions = { // <-- le decimos que esto es de tipo AuthOptions
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -35,22 +33,22 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: "jwt", // ahora ya no tira error
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) token.id = user.id as string;
       return token;
     },
     async session({ session, token }) {
       if (token?.id) {
-        session.user.id = token.id;
+        session.user.id = token.id as string;
       }
       return session;
     },
   },
   pages: {
-    signIn: "/admin/login", // Asegurate que esta ruta existe
+    signIn: "/admin/login",
   },
 };
 
