@@ -25,3 +25,16 @@ export async function deleteTicketType(id: number) {
     where: { id },
   });
 }
+
+export async function getTicketTypeById(id: number) {
+  return prisma.ticketType.findUnique({
+    where: { id },
+  });
+}
+
+export async function updateTicketType(id: number, data: { name: string; description: string; price: number }) {
+  await prisma.ticketType.update({
+    where: { id },
+    data,
+  });
+}

@@ -11,7 +11,7 @@ export default async function TicketTypeList() {
         <h2 className="text-xl font-semibold">Tipos de entradas</h2>
         <Link
           href="/admin/tickets/new"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-sans"
         >
           Crear nueva entrada
         </Link>
@@ -31,7 +31,7 @@ export default async function TicketTypeList() {
             <div className="flex gap-2">
               <Link
                 href={`/admin/tickets/${ticket.id}/edit`}
-                className="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition text-sm"
+                className="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition text-sm font-sans"
               >
                 Editar
               </Link>
