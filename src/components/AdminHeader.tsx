@@ -2,15 +2,23 @@
 
 import { signOut } from "next-auth/react"; // ⬅️ Import correcto
 import { useTransition } from "react";
+import { usePathname } from "next/navigation";
 
 export function AdminHeader({ userName }: { userName: string }) {
   const [isPending, startTransition] = useTransition();
+  const pathname = usePathname();
+
+  if (pathname === "/admin/login") {
+    return null; // No mostrar el header en la página de login
+  }
 
   return (
-    <header className="p-4 flex justify-between items-center bg-gray-100 shadow">
+    <header className="p-4 flex justify-between items-center bg-gray-100 shadow font-sans">
       <h1 className="text-lg">Bienvenido, {userName}</h1>
       <button
-        onClick={() => startTransition(() => signOut({ callbackUrl: "/admin/login" }))}
+        onClick={() =>
+          startTransition(() => signOut({ callbackUrl: "/admin/login" }))
+        }
         disabled={isPending}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
       >
