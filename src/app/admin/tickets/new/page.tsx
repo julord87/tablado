@@ -1,18 +1,30 @@
+"use client";
+
 import { createTicketType } from "@/actions/ticketTypeActions";
 import { redirect } from "next/navigation";
 
-export default function NewTicketTypePage() {
-  async function handleSubmit(formData: FormData) {
-    "use server";
-    const name = formData.get("name") as string;
-    const description = formData.get("description") as string;
-    const price = parseFloat(formData.get("price") as string);
+const handleSubmit = async (formData: FormData) => {
+  const name = formData.get("name")?.toString() || "";
+  const priceString = formData.get("price")?.toString() || "";
+  const description = formData.get("description")?.toString() || "";
 
-    await createTicketType({ name, description, price });
-
-    redirect("/admin");
+  if (!name || !priceString || !description) {
+    console.error("Faltan campos!");
+    return;
   }
 
+  const price = parseFloat(priceString);
+  if (isNaN(price)) {
+    console.error("Precio inválido!");
+    return;
+  }
+
+  await createTicketType({ name, price, description });
+
+  redirect("/admin");
+};
+
+const NewTicketPage = () => {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">Crear nueva entrada</h1>
@@ -47,4 +59,6 @@ export default function NewTicketTypePage() {
       </form>
     </div>
   );
-}
+};
+
+export default NewTicketPage;

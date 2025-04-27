@@ -10,12 +10,18 @@ export async function getTicketTypes() {
   return ticketTypes;
 }
 
-export async function createTicketType(data: {
-  name: string;
-  description: string;
-  price: number;
-}) {
-  await prisma.ticketType.create({
-    data,
+export async function createTicketType(data: { name: string; price: number; description: string }) {
+  return await prisma.ticketType.create({
+    data: {
+      name: data.name,
+      price: data.price,
+      description: data.description,
+    },
+  });
+}
+
+export async function deleteTicketType(id: number) {
+  await prisma.ticketType.delete({
+    where: { id },
   });
 }

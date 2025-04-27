@@ -1,4 +1,5 @@
 import { getTicketTypes } from "@/actions/ticketTypeActions";
+import { DeleteTicketButton } from "./DeleteTicketButton"; // 👈 nuevo import
 import Link from "next/link";
 
 export default async function TicketTypeList() {
@@ -25,6 +26,17 @@ export default async function TicketTypeList() {
               <h3 className="text-lg font-bold">{ticket.name}</h3>
               <p className="text-sm text-gray-600">{ticket.description}</p>
               <p className="text-md text-green-700 font-semibold">{ticket.price} €</p>
+            </div>
+
+            <div className="flex gap-2">
+              <Link
+                href={`/admin/tickets/${ticket.id}/edit`}
+                className="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition text-sm"
+              >
+                Editar
+              </Link>
+
+              <DeleteTicketButton id={ticket.id} /> {/* 👈 nuestro botoncito */}
             </div>
           </div>
         ))}
