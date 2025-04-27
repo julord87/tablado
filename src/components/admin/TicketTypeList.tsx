@@ -1,0 +1,34 @@
+import { getTicketTypes } from "@/actions/ticketTypeActions";
+import Link from "next/link";
+
+export default async function TicketTypeList() {
+  const ticketTypes = await getTicketTypes();
+
+  return (
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Tipos de entradas</h2>
+        <Link
+          href="/admin/tickets/new"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
+          Crear nueva entrada
+        </Link>
+      </div>
+      <div className="grid gap-4">
+        {ticketTypes.map((ticket) => (
+          <div
+            key={ticket.id}
+            className="p-4 border rounded shadow-sm bg-white flex justify-between items-center"
+          >
+            <div>
+              <h3 className="text-lg font-bold">{ticket.name}</h3>
+              <p className="text-sm text-gray-600">{ticket.description}</p>
+              <p className="text-md text-green-700 font-semibold">{ticket.price} €</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
