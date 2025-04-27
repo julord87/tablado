@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import { ReviewsCarousel } from "../../components/Reviews";
-import Gastronomy from "../../components/Gastronomy";
-import PhotoGallery from "../../components/Gallery";
-import HeroSection from "../../components/HeroSection";
+import { ReviewsCarousel } from "../components/Reviews";
+import Gastronomy from "../components/Gastronomy";
+import PhotoGallery from "../components/Gallery";
+import HeroSection from "../components/HeroSection";
 
 // Metadata global para SEO y accesibilidad
 export const metadata: Metadata = {

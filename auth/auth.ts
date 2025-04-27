@@ -1,9 +1,14 @@
-import NextAuth, { type AuthOptions } from "next-auth"; // <-- importamos el tipo AuthOptions
+import { getServerSession, type AuthOptions } from "next-auth"; // <-- importamos el tipo AuthOptions
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../prisma/lib/prisma"; // <-- importamos el prisma
 import bcrypt from "bcryptjs";
 
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("Falta definir NEXTAUTH_SECRET en el entorno.");
+}
+
 export const authOptions: AuthOptions = { // <-- le decimos que esto es de tipo AuthOptions
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -52,4 +57,4 @@ export const authOptions: AuthOptions = { // <-- le decimos que esto es de tipo 
   },
 };
 
-export const { auth } = NextAuth(authOptions);
+export const auth = () => getServerSession(authOptions);

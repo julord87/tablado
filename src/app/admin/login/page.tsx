@@ -8,10 +8,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     const res = await signIn("credentials", {
       redirect: false,
@@ -21,30 +24,51 @@ export default function LoginPage() {
 
     if (res?.error) {
       setError("Email o contraseña incorrectos");
+      setIsLoading(false);
     } else {
       router.push("/admin");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 max-w-sm mx-auto items-center m-20 shadow-md rounded">
-      <h1 className="text-2xl mb-4">Iniciar sesión</h1>
+    <form 
+      onSubmit={handleSubmit}
+      className="p-6 max-w-sm mx-auto mt-20 shadow-lg rounded bg-white flex flex-col gap-4"
+    >
+      <h1 className="text-3xl font-bold mb-4 text-center">Iniciar sesión</h1>
+
       <input
-        type="text"
+        type="email"
         placeholder="Email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="block w-full mb-2 p-2 border rounded"
+        onChange={(e) => { setEmail(e.target.value); setError(""); }}
+        className="block w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-black transition"
+        required
+        autoComplete="email"
       />
+
       <input
         type="password"
         placeholder="Contraseña"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="block w-full mb-2 p-2 border rounded"
+        onChange={(e) => { setPassword(e.target.value); setError(""); }}
+        className="block w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-black transition"
+        required
+        autoComplete="current-password"
       />
-      <button className="bg-black text-white px-4 py-2 rounded">Ingresar</button>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className={`flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded transition hover:bg-gray-800 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+      >
+        {isLoading && (
+          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        )}
+        {isLoading ? "Ingresando..." : "Ingresar"}
+      </button>
+
+      {error && <p className="text-red-500 text-center">{error}</p>}
     </form>
   );
 }
