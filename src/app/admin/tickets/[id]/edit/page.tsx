@@ -1,5 +1,6 @@
 import { getTicketTypeById, updateTicketType } from "@/actions/ticketTypeActions";
 import { notFound, redirect } from "next/navigation";
+import { toast } from "sonner";
 
 interface EditTicketPageProps {
   params: { id: string };
@@ -32,7 +33,10 @@ export default async function EditTicketPage({ params }: EditTicketPageProps) {
 
     await updateTicketType(ticket.id, { name, description, price });
 
-    redirect("/admin?message=Entrada editada!");
+    toast.success("Entrada editada exitosamente"); // Mostramos el toast
+    setTimeout(() => {
+      redirect("/admin");
+    }, 2000);
   };
 
   return (

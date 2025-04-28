@@ -1,15 +1,22 @@
 "use client";
 
 import { deleteTicketType } from "@/actions/ticketTypeActions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function DeleteTicketButton({ id }: { id: number }) {
+  const router = useRouter();
+
   const handleDelete = async () => {
     if (!confirm("¿Seguro que querés eliminar esta entrada?")) {
       return;
     }
+
     await deleteTicketType(id);
 
-    window.location.reload();
+    toast.success("Entrada eliminada exitosamente"); // Mostramos el toast
+
+    router.refresh(); // Actualizamos la lista sin reload feo
   };
 
   return (

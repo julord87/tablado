@@ -2,6 +2,7 @@
 
 import { createTicketType } from "@/actions/ticketTypeActions";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 const handleSubmit = async (formData: FormData) => {
   const name = formData.get("name")?.toString() || "";
@@ -21,7 +22,10 @@ const handleSubmit = async (formData: FormData) => {
 
   await createTicketType({ name, price, description });
 
-  redirect("/admin?message=Entrada creada!");
+  toast.success("Entrada creada exitosamente"); // Mostramos el toast
+  setTimeout(() => {
+    redirect("/admin");
+  }, 2000);
 };
 
 const NewTicketPage = () => {
