@@ -32,7 +32,7 @@ export default async function EditTicketPage({ params }: EditTicketPageProps) {
 
     await updateTicketType(ticket.id, { name, description, price });
 
-    redirect("/admin");
+    redirect("/admin?message=Entrada editada!");
   };
 
   return (

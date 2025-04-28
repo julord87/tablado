@@ -21,7 +21,7 @@ const handleSubmit = async (formData: FormData) => {
 
   await createTicketType({ name, price, description });
 
-  redirect("/admin");
+  redirect("/admin?message=Entrada creada!");
 };
 
 const NewTicketPage = () => {
