@@ -12,7 +12,7 @@ export default async function AdminPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Bienvenido al Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-4">Panel de control</h1>
       
       {/* Tipos de tickets */}
       <TicketTypeList />
