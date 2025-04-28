@@ -45,12 +45,22 @@ export async function getShows() {
     orderBy: {
       date: "asc",
     },
+    include: {
+      _count: {
+        select: { tickets: true },
+      },
+    },
   });
 }
 
 export async function getShowById(id: number) {
   return await prisma.show.findUnique({
     where: { id },
+    include: {
+      _count: {
+        select: { tickets: true },
+      },
+    },
   });
 }
 

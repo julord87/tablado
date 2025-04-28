@@ -12,7 +12,6 @@ model Show {
   date        DateTime
   time        String // Podés usar enum si tenés horarios fijos
   capacity    Int // Capacidad total para ese horario
-  tickets     Ticket[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Reservation Reservation[]
@@ -21,38 +20,35 @@ model Show {
 }
 
 model TicketType {
-  id          Int           @id @default(autoincrement())
-  name        String // Ej: 'Simple', 'Con tapa y bebida'
-  price       Float
-  description String?
-  tickets     Ticket[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  Reservation Reservation[]
-}
-
-model Ticket {
-  id            Int      @id @default(autoincrement())
-  showId        Int
-  typeId        Int
-  customerName  String
-  customerEmail String
-  createdAt     DateTime @default(now())
-
-  type TicketType @relation(fields: [typeId], references: [id])
-  show Show       @relation(fields: [showId], references: [id])
+  id              Int               @id @default(autoincrement())
+  name            String // Ej: 'Simple', 'Con tapa y bebida'
+  price           Float
+  description     String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  ReservationItem ReservationItem[]
 }
 
 model Reservation {
   id            Int      @id @default(autoincrement())
-  showId        Int
-  typeId        Int
   customerName  String
   customerEmail String
+  showId        Int
   createdAt     DateTime @default(now())
 
-  type TicketType @relation(fields: [typeId], references: [id])
-  show Show       @relation(fields: [showId], references: [id])
+  show          Show              @relation(fields: [showId], references: [id])
+  items         ReservationItem[]
+}
+
+
+model ReservationItem {
+  id            Int @id @default(autoincrement())
+  reservationId Int
+  typeId        Int
+  quantity      Int @default(1)
+
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+  type        TicketType  @relation(fields: [typeId], references: [id])
 }
 
 model User {

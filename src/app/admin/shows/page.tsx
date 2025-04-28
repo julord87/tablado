@@ -22,25 +22,34 @@ export default async function AdminShowsPage() {
       {shows.length === 0 ? (
         <p>No hay shows programados.</p>
       ) : (
-        <table className="w-full border text-lg">
+        <table className="w-full border">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gray-100 text-lg">
               <th className="p-2 border">Fecha</th>
               <th className="p-2 border">Hora</th>
               <th className="p-2 border">Capacidad</th>
+              <th className="p-2 border">Tickets vendidos</th>
               <th className="p-2 border">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {shows.map((show) => (
               <tr key={show.id} className="text-center font-sans">
-                <td className="border p-2">{new Date(show.date).toLocaleDateString()}</td>
+                <td className="border p-2">
+                  {new Date(show.date).toLocaleDateString()}
+                </td>
                 <td className="border p-2">{show.time}</td>
                 <td className="border p-2">{show.capacity}</td>
+                <td className="border p-2">{show._count.tickets}</td>
                 <td className="border p-2 space-x-2">
+                  <Link href={`/admin/shows/${show.id}`}>
+                    <button className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                      Detalle
+                    </button>
+                  </Link>
                   <Link
                     href={`/admin/shows/${show.id}/edit`}
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 text-sm"
+                    className="bg-rose-400 text-white px-2 py-1 rounded hover:bg-rose-500 text-sm"
                   >
                     Editar
                   </Link>

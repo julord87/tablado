@@ -49,20 +49,42 @@ export default function EditShowPage({ params }: EditShowPageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    await updateShow({
-      id: numericId,
-      date,
-      time,
-      capacity,
-    });
-
-    toast.success("✅ Show actualizado exitosamente!");
-
-    setTimeout(() => {
-      router.push("/admin/shows");
-    }, 1500);
+  
+    // Validaciones básicas
+    if (!date) {
+      toast.error("⚠️ Tenés que seleccionar una fecha");
+      return;
+    }
+  
+    if (!time) {
+      toast.error("⚠️ Tenés que poner un horario");
+      return;
+    }
+  
+    if (capacity <= 0) {
+      toast.error("⚠️ La capacidad debe ser mayor a cero");
+      return;
+    }
+  
+    try {
+      await updateShow({
+        id: numericId,
+        date,
+        time,
+        capacity,
+      });
+  
+      toast.success("✅ Show actualizado!");
+  
+      setTimeout(() => {
+        router.push("/admin/shows");
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      toast.error("❌ Ocurrió un error al actualizar el show");
+    }
   };
+  
 
   if (loading) return <p className="p-6">Cargando...</p>;
 
@@ -85,7 +107,7 @@ export default function EditShowPage({ params }: EditShowPageProps) {
         <div>
           <label className="block mb-1 font-semibold">Horario</label>
           <input
-            type="text"
+            type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
             className="border p-2 rounded w-full"
