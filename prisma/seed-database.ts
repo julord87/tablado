@@ -28,7 +28,7 @@ async function main() {
         },
         {
           name: "Valeria",
-          email: "valemar1970@gmil.com",
+          email: "valemar1970@gmail.com",
           password: await bcrypt.hash("1970", 10),
         },
       ],
