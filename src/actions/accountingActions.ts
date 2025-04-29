@@ -17,6 +17,21 @@ export async function getIncomesByMonth(month: number, year: number) {
   });
 }
 
+export async function getIncomesByYear(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year + 1, 0, 0, 23, 59, 59);
+
+  return prisma.income.findMany({
+    where: {
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+    orderBy: { date: "desc" },
+  });
+}
+
 export async function createIncome(data: {
   amount: number;
   source: string;
