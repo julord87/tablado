@@ -64,7 +64,7 @@ export default function AdminUsersClient({ users }: { users: any[] }) {
       </form>
 
       <table className="w-full text-sm border">
-        <thead className="bg-gray-100">
+        <thead className="bg-gray-100 text-lg">
           <tr>
             <th className="border px-2 py-1">ID</th>
             <th className="border px-2 py-1">Nombre</th>
@@ -74,7 +74,7 @@ export default function AdminUsersClient({ users }: { users: any[] }) {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id} className="text-center">
+            <tr key={user.id} className="text-center font-sans">
               <td className="border px-2 py-1">{user.id}</td>
               <td className="border px-2 py-1">{user.name}</td>
               <td className="border px-2 py-1">{user.email}</td>

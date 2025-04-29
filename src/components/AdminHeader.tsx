@@ -22,6 +22,12 @@ export function AdminHeader({ userName }: { userName: string }) {
         <a href="/admin/shows" className="text-blue-500 hover:underline">
           Shows
         </a>
+        <a href="/admin/reservations" className="text-blue-500 hover:underline">
+          Reservas
+        </a>
+        <a href="/admin/faq" className="text-blue-500 hover:underline">
+          Contabilidad
+        </a>
         <a href="/admin/tickets" className="text-blue-500 hover:underline">
           Tickets
         </a>
