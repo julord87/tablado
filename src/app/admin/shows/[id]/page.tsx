@@ -53,7 +53,7 @@ export default async function ShowReservationsPage({ params, searchParams }: Pro
         {queryValue && (
           <Link
             href={`/admin/shows/${params.id}`}
-            className="ml-2 text-sm text-gray-600 underline"
+            className="ml-2 text-sm text-gray-600 underline font-sans"
           >
             Limpiar filtro
           </Link>
@@ -63,17 +63,17 @@ export default async function ShowReservationsPage({ params, searchParams }: Pro
       <table className="w-full border border-gray-300 text-sm">
         <thead>
           <tr className="bg-gray-100 text-lg">
-            <th className="border px-2 py-1">ID</th>
+            <th className="border px-2 py-1">Cód. Reserva</th>
             <th className="border px-2 py-1">Nombre</th>
             <th className="border px-2 py-1">Email</th>
             <th className="border px-2 py-1">Entradas</th>
             <th className="border px-2 py-1">Fecha reserva</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="font-sans text-center">
           {show.Reservation.map((res) => (
             <tr key={res.id}>
-              <td className="border px-2 py-1">{res.id}</td>
+              <td className="border px-2 py-1">{res.reservationCode}</td>
               <td className="border px-2 py-1">{res.customerName}</td>
               <td className="border px-2 py-1">{res.customerEmail}</td>
               <td className="border px-2 py-1">

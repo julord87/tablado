@@ -8,7 +8,6 @@ export default async function TicketTypeList() {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Tipos de entradas</h2>
         <Link
           href="/admin/tickets/new"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-sans"

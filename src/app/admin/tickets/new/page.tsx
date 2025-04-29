@@ -24,7 +24,7 @@ const handleSubmit = async (formData: FormData) => {
 
   toast.success("Entrada creada exitosamente"); // Mostramos el toast
   setTimeout(() => {
-    redirect("/admin");
+    redirect("/admin/tickets");
   }, 2000);
 };
 
