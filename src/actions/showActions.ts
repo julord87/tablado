@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -15,6 +16,20 @@ interface UpdateShowInput {
   time: string;
   capacity: number;
 }
+
+export type ShowWithReservations = Prisma.ShowGetPayload<{
+  include: {
+    Reservation: {
+      select: {
+        items: {
+          select: {
+            quantity: true;
+          };
+        };
+      };
+    };
+  };
+}>;
 
 export async function getHistoricShows() {
   const today = new Date();
@@ -32,22 +47,28 @@ export async function getHistoricShows() {
   });
 }
 
-export async function getShows() {
+export async function getShows(): Promise<ShowWithReservations[]> {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Ponemos la hora a 00:00 para comparar solo por fecha
+  today.setHours(0, 0, 0, 0);
 
   return await prisma.show.findMany({
     where: {
       date: {
-        gte: today, // "greater than or equal" = shows hoy o más adelante
+        gte: today,
       },
     },
     orderBy: {
       date: "asc",
     },
     include: {
-      _count: {
-        select: { tickets: true },
+      Reservation: {
+        select: {
+          items: {
+            select: {
+              quantity: true,
+            },
+          },
+        },
       },
     },
   });
@@ -58,7 +79,9 @@ export async function getShowById(id: number) {
     where: { id },
     include: {
       _count: {
-        select: { tickets: true },
+        select: {
+          Reservation: true, // cuenta las reservas, que es lo que querés
+        },
       },
     },
   });
