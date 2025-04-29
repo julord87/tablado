@@ -9,3 +9,5 @@ export * from "./Reviews";
 
 export * from "./admin/TicketTypeList";
 export * from "./admin/DeleteTicketButton";
+export * from "./admin/DeleteShowButton";
+export * from "./admin/UsersAdminTable";

@@ -1,13 +1,13 @@
 import { initialData } from "./seed";
-import prisma from "./lib/prisma";
+import { prisma } from "./lib";
 import bcrypt from "bcryptjs";
 
 async function main() {
   // Borrar las tablas
-  await prisma.ticketType.deleteMany();
-  await prisma.ticket.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.reservationItem.deleteMany();
   await prisma.reservation.deleteMany();
+  await prisma.ticketType.deleteMany();
   await prisma.show.deleteMany();
 
   // Insertar los datos iniciales

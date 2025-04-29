@@ -18,7 +18,7 @@ export default function CreateShowPage() {
 
     await createShow({
       date,
-      time: time as "SIX_PM" | "SEVEN_THIRTY" | "NINE_PM",
+      time,
       capacity,
     });
 

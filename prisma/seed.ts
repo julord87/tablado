@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 
 interface SeedTicketType {
   id: number;
@@ -38,6 +37,14 @@ export const initialData: SeedData = {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
+    {
+      id: 3,
+      name: "Niño",
+      price: 17.0,
+      description: "Entrada para niños menores de 12 años",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
   ],
 
   // users: [
