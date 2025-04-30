@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { format, isWithinInterval, subDays } from "date-fns";
-import { es } from "date-fns/locale";
 import {
   getIncomesByMonth,
   createIncome,
@@ -22,6 +21,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getFormattedTitle, numberToMonth } from "../../../../../helpers";
+import { incomeTypes } from "../../../../../utils/incomeTypes";
+import { IncomeType } from "@prisma/client";
+import { CloseDayCashButton } from "@/components";
 
 export default function IncomePage() {
   const today = new Date();
@@ -32,6 +34,7 @@ export default function IncomePage() {
   const [year, setYear] = useState(today.getFullYear());
   const [totalAnual, setTotalAnual] = useState(0);
   const [incomes, setIncomes] = useState<any[]>([]);
+  const [type, setType] = useState<IncomeType>(IncomeType.ticket);
   const [amount, setAmount] = useState("");
   const [source, setSource] = useState("");
   const [date, setDate] = useState(format(today, "yyyy-MM-dd"));
@@ -97,10 +100,11 @@ export default function IncomePage() {
         amount: parseFloat(amount),
         source,
         date,
+        type,
       });
       toast.success("✏️ Ingreso editado exitosamente!");
     } else {
-      await createIncome({ amount: parseFloat(amount), source, date });
+      await createIncome({ amount: parseFloat(amount), source, date, type });
       toast.success("✅ Ingreso agregado exitosamente!");
     }
 
@@ -137,7 +141,11 @@ export default function IncomePage() {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4">
-        {getFormattedTitle(selectedDay ? new Date(selectedDay) : null, year, month)}
+        {getFormattedTitle(
+          selectedDay ? new Date(selectedDay) : null,
+          year,
+          month
+        )}
       </h2>
 
       <div className="flex gap-4 mb-4 font-sans">
@@ -185,7 +193,7 @@ export default function IncomePage() {
               }
             }}
           >
-            ← Día anterior
+            ← Anterior
           </Button>
           <Button
             variant="outline"
@@ -197,7 +205,7 @@ export default function IncomePage() {
               }
             }}
           >
-            Día siguiente →
+            Siguiente →
           </Button>
         </div>
         <Button
@@ -274,6 +282,18 @@ export default function IncomePage() {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                   />
+                  <Label>Tipo</Label>
+                  <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value as IncomeType)}
+                    className="w-full p-2 border rounded"
+                  >
+                    {incomeTypes.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div>
@@ -290,6 +310,11 @@ export default function IncomePage() {
             </div>
           </DialogContent>
         </Dialog>
+
+        <CloseDayCashButton
+          date={new Date()}
+          onCloseSuccess={() => setRefresh(!refresh)}
+        />
       </div>
 
       <table className="w-full table-auto border mt-4 font-sans">
@@ -297,6 +322,7 @@ export default function IncomePage() {
           <tr className="bg-gray-100">
             <th className="border px-2 py-1 text-left">Fecha</th>
             <th className="border px-2 py-1 text-left">Origen</th>
+            <th className="border px-2 py-1 text-left">Tipo</th>
             <th className="border px-2 py-1 text-left">Monto</th>
             <th className="border px-2 py-1 text-left">Acciones</th>
           </tr>
@@ -305,9 +331,10 @@ export default function IncomePage() {
           {incomes.map((income) => (
             <tr key={income.id}>
               <td className="border px-2 py-1">
-                {format(new Date(income.date), "dd/MM/yyyy")}
+                {format(new Date(income.date), "dd/MM/yyyy" + " HH:mm:ss")}
               </td>
               <td className="border px-2 py-1">{income.source}</td>
+              <td className="border px-2 py-1 capitalize">{income.type}</td>
               <td className="border px-2 py-1">${income.amount.toFixed(2)}</td>
               <td className="border px-2 py-1 space-x-2">
                 <Button size="sm" onClick={() => handleEdit(income)}>
@@ -325,8 +352,8 @@ export default function IncomePage() {
           ))}
         </tbody>
         <tfoot>
-          <tr className="bg-gray-100 font-semibold text-lg">
-            <td colSpan={2} className="border px-2 py-1 text-right">
+          <tr className="bg-gray-50 font-semibold text-lg">
+            <td colSpan={3} className="border px-2 py-1 text-right">
               Total
             </td>
             <td className="border px-2 py-1">

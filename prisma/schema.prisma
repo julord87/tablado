@@ -62,14 +62,22 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Income {
-  id        Int      @id @default(autoincrement())
-  amount    Float
-  source    String   // Ej: "Venta de entradas"
-  date      DateTime @default(now())
-  showId    Int?     // Opcional si está vinculado a un show
-  show      Show?    @relation(fields: [showId], references: [id])
+enum IncomeType {
+  ticket
+  barra
+  otro
 }
+
+model Income {
+  id        Int        @id @default(autoincrement())
+  amount    Float
+  source    String
+  date      DateTime   @default(now())
+  type      IncomeType?
+  showId    Int?
+  show      Show?      @relation(fields: [showId], references: [id])
+}
+
 
 model Expense {
   id        Int      @id @default(autoincrement())

@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "../../prisma/lib/prisma";
+import { IncomeType } from "@prisma/client";
 
 export async function getIncomesByMonth(month: number, year: number) {
   const start = new Date(year, month - 1, 1);
@@ -36,30 +37,88 @@ export async function createIncome(data: {
   amount: number;
   source: string;
   date: string;
+  type: IncomeType;
 }) {
-  const { amount, source, date } = data;
+  const { amount, source, date, type } = data;
   await prisma.income.create({
     data: {
       amount,
       source,
       date: new Date(date),
+      type,
     },
   });
 }
 
 export async function updateIncome(
   id: number,
-  data: { amount: number; source: string; date: string }
+  data: Partial<{
+    amount: number;
+    source: string;
+    date: string;
+    type: IncomeType;
+  }>
 ) {
-  const { amount, source, date } = data;
+  const { amount, source, date, type } = data;
   await prisma.income.update({
     where: { id },
     data: {
-      amount,
-      source,
-      date: new Date(date),
+      ...(amount && { amount }),
+      ...(source && { source }),
+      ...(date && { date: new Date(date) }),
+      ...(type && { type }),
     },
   });
+}
+
+export async function closeCashForDay(date: Date): Promise<number | null> {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const shows = await prisma.show.findMany({
+    where: {
+      date: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    },
+    include: {
+      Reservation: {
+        include: {
+          items: { include: { type: true } },
+        },
+      },
+    },
+  });
+
+  if (shows.length === 0) return null; // <-- No cerrar si no hay shows
+
+  const total = shows
+    .flatMap((show) =>
+      show.Reservation.flatMap((r) =>
+        r.items.map((i) => i.type.price * i.quantity)
+      )
+    )
+    .reduce((a, b) => a + b, 0);
+
+  const formattedDate = new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(endOfDay);
+
+  await prisma.income.create({
+    data: {
+      amount: total,
+      type: "ticket",
+      source: `Cierre de caja ventas web del ${formattedDate}`,
+      date: new Date(),
+    },
+  });
+
+  return total;
 }
 
 export async function deleteIncome(id: number) {

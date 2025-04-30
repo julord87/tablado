@@ -1,13 +1,17 @@
 import { prisma } from "../../../../../prisma/lib";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { es } from "date-fns/locale";
 
 interface Props {
   params: { id: string };
   searchParams: { query?: string };
 }
 
-export default async function ShowReservationsPage({ params, searchParams }: Props) {
+export default async function ShowReservationsPage({
+  params,
+  searchParams,
+}: Props) {
   const showId = parseInt(params.id); // Esto ya es correcto en una función async
 
   if (isNaN(showId)) return notFound();
@@ -37,8 +41,13 @@ export default async function ShowReservationsPage({ params, searchParams }: Pro
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">
-        Reservas para el show del {new Date(show.date).toLocaleDateString()} a
-        las {show.time}
+        Reservas para el show del{" "}
+        {new Date(show.date).toLocaleDateString("es-ES", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
       </h1>
 
       <form method="get" className="mb-4">

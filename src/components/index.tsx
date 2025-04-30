@@ -13,3 +13,5 @@ export * from "./admin/DeleteTicketButton";
 export * from "./admin/DeleteShowButton";
 
 export * from "./admin/UsersAdminTable";
+
+export * from "./admin/CashClosing";
