@@ -1,0 +1,9 @@
+{
+    "cron": [
+      {
+        "path": "/api/close-cash-day",
+        "schedule": "59 21 * * *"
+      }
+    ]
+  }
+  
