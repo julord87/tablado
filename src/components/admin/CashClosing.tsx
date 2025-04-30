@@ -1,41 +1,45 @@
 "use client";
-
-import { closeCashForDay } from "@/actions/accountingActions";
-import { isCashClosedForToday } from "@/actions/accountingActions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { closeCashForDay, deleteDayCashClosure } from "@/actions/accountingActions";
 
-// CloseDayCashButton.tsx
-export function CloseDayCashButton({ date, onCloseSuccess }: { date: Date; onCloseSuccess?: () => void }) {
-  const [isDisabled, setIsDisabled] = useState(false);
+type Props = {
+  date: Date;
+  isCashClosed: boolean;
+  setIsCashClosed: (val: boolean) => void;
+  onCloseSuccess?: () => void;
+};
 
-  useEffect(() => {
-    (async () => {
-      const closed = await isCashClosedForToday();
-      setIsDisabled(closed);
-    })();
-  }, []);
-  const router = useRouter();
+export function CloseDayCashButton({ date, isCashClosed, setIsCashClosed, onCloseSuccess }: Props) {
+  const [loading, setLoading] = useState(false);
 
-  const handleClick = async () => {
-    try {
-      const total = await closeCashForDay(date);
-      if (total !== null && total !== undefined) {
-        toast.success(`Cierre de caja del día registrado: $${total.toFixed(2)}`);
-        onCloseSuccess?.(); // <--- gatillamos el refresh desde IncomePage
-      } else {
-        toast.error("Error: el total es nulo o indefinido");
-      }
-      router.refresh(); // opcional si querés forzar navegación
-    } catch (error: any) {
-      toast.error(error.message || "Error al cerrar la caja del día");
+  const handleCloseCash = async () => {
+    setLoading(true);
+    const total = await closeCashForDay(date); // tu acción server
+    setLoading(false);
+    if (total !== null) {
+      toast.success(`💸 Caja del día cerrada por $${total}!`);
+      setIsCashClosed(true);
+      onCloseSuccess?.();
     }
   };
 
-  return (
-    <Button variant="outline" onClick={handleClick} disabled={isDisabled}>
+  const handleDeleteClosure = async () => {
+    setLoading(true);
+    await deleteDayCashClosure(date);
+    setLoading(false);
+    toast.success("❌ Cierre eliminado!");
+    setIsCashClosed(false);
+    onCloseSuccess?.();
+  };
+
+  return isCashClosed ? (
+    <Button onClick={handleDeleteClosure} variant="destructive" disabled={loading}>
+      💵 Reabrir caja
+    </Button>
+  ) : (
+    <Button onClick={handleCloseCash} disabled={loading} variant={"secondary"}>
       💵 Cerrar caja del día
     </Button>
   );

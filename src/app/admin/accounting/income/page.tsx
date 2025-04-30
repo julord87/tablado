@@ -40,6 +40,7 @@ export default function IncomePage() {
   const [date, setDate] = useState(format(today, "yyyy-MM-dd"));
   const [refresh, setRefresh] = useState(false);
   const [allMonthIncomes, setAllMonthIncomes] = useState<any[]>([]);
+  const [isCashClosed, setIsCashClosed] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -92,19 +93,31 @@ export default function IncomePage() {
     });
   }, [year, refresh]);
 
+  useEffect(() => {
+    const checkCashStatus = async () => {
+      const res = await fetch(
+        "/api/is-cash-closed?date=" +
+          (selectedDay ?? format(today, "yyyy-MM-dd"))
+      );
+      const data = await res.json();
+      setIsCashClosed(data.closed);
+    };
+    checkCashStatus();
+  }, [selectedDay, refresh]);
+
   const handleSubmit = async () => {
     if (!amount || !source || !date) return alert("Faltan datos");
-  
+
     const localDate = new Date(date);
     localDate.setHours(0, 0, 0, 0); // fuerza a las 00:00 local
-  
+
     const payload = {
       amount: parseFloat(amount),
       source,
       date: localDate.toISOString(), // o directamente `localDate`
       type,
     };
-  
+
     if (isEditing && editingIncomeId !== null) {
       await updateIncome(editingIncomeId, payload);
       toast.success("✏️ Ingreso editado exitosamente!");
@@ -112,7 +125,7 @@ export default function IncomePage() {
       await createIncome(payload);
       toast.success("✅ Ingreso agregado exitosamente!");
     }
-  
+
     resetForm();
     setRefresh(!refresh);
     setDialogOpen(false);
@@ -317,7 +330,9 @@ export default function IncomePage() {
         </Dialog>
 
         <CloseDayCashButton
-          date={new Date()}
+          date={new Date(selectedDay ?? format(today, "yyyy-MM-dd"))}
+          isCashClosed={isCashClosed}
+          setIsCashClosed={setIsCashClosed}
           onCloseSuccess={() => setRefresh(!refresh)}
         />
       </div>

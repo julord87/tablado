@@ -141,6 +141,30 @@ export async function isCashClosedForToday(): Promise<boolean> {
   return !!existingClosure;
 }
 
+export async function deleteDayCashClosure(date: Date) {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const closure = await prisma.income.findFirst({
+    where: {
+      type: 'tickets_web',
+      date: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    },
+  });
+
+  if (closure) {
+    await prisma.income.delete({
+      where: { id: closure.id },
+    });
+  }
+}
+
+
 
 export async function deleteIncome(id: number) {
   await prisma.income.delete({
