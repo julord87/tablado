@@ -15,9 +15,9 @@ model Show {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Reservation Reservation[]
+  Income      Income[]
 
   @@unique([date, time])
-  Income Income[]
 }
 
 model TicketType {
@@ -38,10 +38,9 @@ model Reservation {
   showId          Int
   createdAt       DateTime @default(now())
 
-  show            Show              @relation(fields: [showId], references: [id])
-  items           ReservationItem[]
+  show  Show              @relation(fields: [showId], references: [id])
+  items ReservationItem[]
 }
-
 
 model ReservationItem {
   id            Int @id @default(autoincrement())
@@ -66,25 +65,36 @@ enum IncomeType {
   tickets
   tickets_web
   barra
-  otro
+  otros
 }
 
 model Income {
-  id        Int        @id @default(autoincrement())
-  amount    Float
-  source    String
-  date      DateTime   @default(now())
-  type      IncomeType?
-  showId    Int?
-  show      Show?      @relation(fields: [showId], references: [id])
+  id     Int         @id @default(autoincrement())
+  amount Float
+  source String
+  date   DateTime    @default(now())
+  type   IncomeType?
+  showId Int?
+  show   Show?       @relation(fields: [showId], references: [id])
 }
 
+enum ExpenseCategory {
+  publicidad
+  bar
+  sueldos
+  artistas
+  alquiler
+  servicios
+  insumos
+  mantenimiento
+  comisiones
+  varios
+}
 
 model Expense {
-  id        Int      @id @default(autoincrement())
-  amount    Float
-  category  String   // Ej: "Publicidad", "Sueldos"
+  id          Int             @id @default(autoincrement())
+  amount      Float
+  category    ExpenseCategory
   description String?
-  date      DateTime @default(now())
+  date        DateTime        @default(now())
 }
-
