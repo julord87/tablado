@@ -33,6 +33,9 @@ export async function getIncomesByYear(year: number) {
   });
 }
 
+const now = new Date();
+const sevilleTime = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Madrid" }));
+
 export async function createIncome(data: {
   amount: number;
   source: string;
@@ -44,7 +47,7 @@ export async function createIncome(data: {
     data: {
       amount,
       source,
-      date: new Date(date),
+      date: sevilleTime,
       type,
     },
   });
@@ -112,7 +115,7 @@ export async function closeCashForDay(date: Date): Promise<number | null> {
   await prisma.income.create({
     data: {
       amount: total,
-      type: "ticket",
+      type: "tickets_web",
       source: `Cierre de caja ventas web del ${formattedDate}`,
       date: new Date(),
     },
@@ -120,6 +123,24 @@ export async function closeCashForDay(date: Date): Promise<number | null> {
 
   return total;
 }
+
+export async function isCashClosedForToday(): Promise<boolean> {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const existingClosure = await prisma.income.findFirst({
+    where: {
+      type: 'tickets_web',
+      date: {
+        gte: today,
+        lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+      },
+    },
+  });
+
+  return !!existingClosure;
+}
+
 
 export async function deleteIncome(id: number) {
   await prisma.income.delete({

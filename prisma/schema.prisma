@@ -63,7 +63,8 @@ model User {
 }
 
 enum IncomeType {
-  ticket
+  tickets
+  tickets_web
   barra
   otro
 }

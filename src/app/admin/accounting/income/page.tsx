@@ -34,7 +34,7 @@ export default function IncomePage() {
   const [year, setYear] = useState(today.getFullYear());
   const [totalAnual, setTotalAnual] = useState(0);
   const [incomes, setIncomes] = useState<any[]>([]);
-  const [type, setType] = useState<IncomeType>(IncomeType.ticket);
+  const [type, setType] = useState<IncomeType>(IncomeType.barra);
   const [amount, setAmount] = useState("");
   const [source, setSource] = useState("");
   const [date, setDate] = useState(format(today, "yyyy-MM-dd"));
@@ -94,20 +94,25 @@ export default function IncomePage() {
 
   const handleSubmit = async () => {
     if (!amount || !source || !date) return alert("Faltan datos");
-
+  
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0); // fuerza a las 00:00 local
+  
+    const payload = {
+      amount: parseFloat(amount),
+      source,
+      date: localDate.toISOString(), // o directamente `localDate`
+      type,
+    };
+  
     if (isEditing && editingIncomeId !== null) {
-      await updateIncome(editingIncomeId, {
-        amount: parseFloat(amount),
-        source,
-        date,
-        type,
-      });
+      await updateIncome(editingIncomeId, payload);
       toast.success("✏️ Ingreso editado exitosamente!");
     } else {
-      await createIncome({ amount: parseFloat(amount), source, date, type });
+      await createIncome(payload);
       toast.success("✅ Ingreso agregado exitosamente!");
     }
-
+  
     resetForm();
     setRefresh(!refresh);
     setDialogOpen(false);
