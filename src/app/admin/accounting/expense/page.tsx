@@ -23,10 +23,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getFormattedTitle } from "../../../../../helpers";
 
 export default function ExpensePage() {
   const today = new Date();
-  const [selectedDay, setSelectedDay] = useState(format(today, "yyyy-MM-dd"));
+  const [selectedDay, setSelectedDay] = useState<string | null>(
+    format(today, "yyyy-MM-dd")
+  );
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [year, setYear] = useState(today.getFullYear());
   const [expenses, setExpenses] = useState<any[]>([]);
@@ -49,16 +52,24 @@ export default function ExpensePage() {
   });
 
   useEffect(() => {
-    const fechaSeleccionada = new Date(selectedDay);
-    getExpenseTotals(fechaSeleccionada).then(setTotales);
-  }, [selectedDay, refresh]);
+    if (selectedDay) {
+      const fechaSeleccionada = new Date(selectedDay);
+      getExpenseTotals(fechaSeleccionada).then(setTotales);
+    } else {
+      getExpenseTotals(null, month, year).then(setTotales);
+    }
+  }, [selectedDay, month, year, refresh]);
 
   useEffect(() => {
     getExpensesByMonth(month, year).then((res) => {
-      const filtered = res.filter(
-        (e) => format(new Date(e.date), "yyyy-MM-dd") === selectedDay
-      );
-      setExpenses(filtered);
+      if (selectedDay) {
+        const filtered = res.filter(
+          (e) => format(new Date(e.date), "yyyy-MM-dd") === selectedDay
+        );
+        setExpenses(filtered);
+      } else {
+        setExpenses(res);
+      }
     });
   }, [month, year, selectedDay, refresh]);
 
@@ -88,6 +99,11 @@ export default function ExpensePage() {
     setDialogOpen(false);
   };
 
+  const updateMonthYearFromDate = (date: Date) => {
+    setMonth(date.getMonth() + 1);
+    setYear(date.getFullYear());
+  };
+
   const handleEdit = (expense: any) => {
     setAmount(expense.amount.toString());
     setCategory(expense.category);
@@ -96,6 +112,14 @@ export default function ExpensePage() {
     setEditingId(expense.id);
     setIsEditing(true);
     setDialogOpen(true);
+  };
+
+  const handleVerTodoElMes = () => {
+    if (selectedDay) {
+      const fecha = new Date(selectedDay);
+      updateMonthYearFromDate(fecha);
+      setSelectedDay(null);
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -117,12 +141,21 @@ export default function ExpensePage() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Egresos</h2>
+      <h2 className="text-2xl font-semibold mb-6">
+        {getFormattedTitle(
+          selectedDay ? new Date(selectedDay) : null,
+          year,
+          month,
+          "Egresos"
+        )}
+      </h2>
 
       <div className="flex gap-4 mb-4 font-sans">
         <div className="bg-green-100 text-green-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del día</p>
-          <p className="text-xl font-bold">${totales.totalDia.toFixed(2)}</p>
+          <p className="text-xl font-bold">
+            {selectedDay ? `$${totales.totalDia.toFixed(2)}` : "--"}
+          </p>
         </div>
         <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Últimos 7 días</p>
@@ -142,12 +175,58 @@ export default function ExpensePage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-4 font-sans">
+      <div className="flex gap-4 mb-1 font-sans items-center">
         <Input
           type="date"
-          value={selectedDay}
-          onChange={(e) => setSelectedDay(e.target.value)}
+          value={selectedDay ?? ""}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value) {
+              setSelectedDay(value);
+              updateMonthYearFromDate(new Date(value));
+            }
+          }}
         />
+        <div className="flex gap-4 mb-4 font-sans items-end">
+          <div className="flex flex-col gap-1">
+            <Label className="invisible">Placeholder</Label>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (selectedDay) {
+                    const prev = new Date(selectedDay);
+                    prev.setDate(prev.getDate() - 1);
+                    setSelectedDay(format(prev, "yyyy-MM-dd"));
+                    updateMonthYearFromDate(prev);
+                  }
+                }}
+              >
+                ← Anterior
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (selectedDay) {
+                    const prev = new Date(selectedDay);
+                    prev.setDate(prev.getDate() + 1);
+                    setSelectedDay(format(prev, "yyyy-MM-dd"));
+                    updateMonthYearFromDate(prev);
+                  }
+                }}
+              >
+                Siguiente →
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <Label className="invisible">Placeholder</Label>
+            <Button variant="outline" onClick={handleVerTodoElMes}>
+              Ver todo el mes
+            </Button>
+          </div>
+        </div>
         <select
           value={month}
           onChange={(e) => setMonth(+e.target.value)}
@@ -271,7 +350,12 @@ export default function ExpensePage() {
             <td colSpan={3} className="border px-2 py-1 text-right">
               Total
             </td>
-            <td className="border px-2 py-1">${totales.totalDia.toFixed(2)}</td>
+            <td className="border px-2 py-1">
+              $
+              {selectedDay
+                ? totales.totalDia.toFixed(2)
+                : totales.totalMes.toFixed(2)}
+            </td>
             <td className="border px-2 py-1" />
           </tr>
         </tfoot>

@@ -158,11 +158,12 @@ export default function IncomePage() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">
+      <h2 className="text-2xl font-semibold mb-6">
         {getFormattedTitle(
           selectedDay ? new Date(selectedDay) : null,
           year,
-          month
+          month,
+          "Ingresos"
         )}
       </h2>
 
@@ -189,7 +190,7 @@ export default function IncomePage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-4 font-sans">
+      <div className="flex gap-4 mb-4 font-sans my-8">
         <Input
           type="date"
           value={selectedDay ?? ""}

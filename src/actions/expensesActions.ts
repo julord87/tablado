@@ -66,73 +66,55 @@ export async function updateExpense(
   revalidatePath("/admin/accounting/expense");
 }
 
-export async function getExpenseTotals(date: Date = new Date()) {
-    const base = new Date(date);
-  
-    const startOfDay = new Date(base);
+export async function getExpenseTotals(
+  fecha: Date | null,
+  month?: number,
+  year?: number
+) {
+  if (fecha) {
+    const startOfDay = new Date(fecha);
     startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(base);
+
+    const endOfDay = new Date(fecha);
     endOfDay.setHours(23, 59, 59, 999);
-  
-    const startOfWeek = new Date(base);
-    startOfWeek.setDate(base.getDate() - 6);
+
+    const startOfWeek = new Date(fecha);
+    startOfWeek.setDate(startOfWeek.getDate() - 6);
     startOfWeek.setHours(0, 0, 0, 0);
-  
-    const startOfMonth = new Date(base.getFullYear(), base.getMonth(), 1);
-    const endOfMonth = new Date(base.getFullYear(), base.getMonth() + 1, 0);
-    endOfMonth.setHours(23, 59, 59, 999);
-  
-    const startOfYear = new Date(base.getFullYear(), 0, 1);
-    const endOfYear = new Date(base.getFullYear(), 11, 31);
-    endOfYear.setHours(23, 59, 59, 999);
-  
+
+    const startOfMonth = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+    const endOfMonth = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+
+    const startOfYear = new Date(fecha.getFullYear(), 0, 1);
+    const endOfYear = new Date(fecha.getFullYear(), 11, 31);
+
     const [totalDia, totalSemana, totalMes, totalAnual] = await Promise.all([
       prisma.expense.aggregate({
-        _sum: {
-          amount: true,
-        },
+        _sum: { amount: true },
         where: {
-          date: {
-            gte: startOfDay,
-            lte: endOfDay,
-          },
+          date: { gte: startOfDay, lte: endOfDay },
         },
       }),
       prisma.expense.aggregate({
-        _sum: {
-          amount: true,
-        },
+        _sum: { amount: true },
         where: {
-          date: {
-            gte: startOfWeek,
-            lte: endOfDay,
-          },
+          date: { gte: startOfWeek, lte: endOfDay },
         },
       }),
       prisma.expense.aggregate({
-        _sum: {
-          amount: true,
-        },
+        _sum: { amount: true },
         where: {
-          date: {
-            gte: startOfMonth,
-            lte: endOfMonth,
-          },
+          date: { gte: startOfMonth, lte: endOfMonth },
         },
       }),
       prisma.expense.aggregate({
-        _sum: {
-          amount: true,
-        },
+        _sum: { amount: true },
         where: {
-          date: {
-            gte: startOfYear,
-            lte: endOfYear,
-          },
+          date: { gte: startOfYear, lte: endOfYear },
         },
       }),
     ]);
-  
+
     return {
       totalDia: totalDia._sum.amount || 0,
       totalSemana: totalSemana._sum.amount || 0,
@@ -140,7 +122,35 @@ export async function getExpenseTotals(date: Date = new Date()) {
       totalAnual: totalAnual._sum.amount || 0,
     };
   }
-  
+
+  // Si no hay fecha (selectedDay es null), calculá solo el total del mes y del año
+  const startOfMonth = new Date(year!, month! - 1, 1);
+  const endOfMonth = new Date(year!, month!, 0);
+  const startOfYear = new Date(year!, 0, 1);
+  const endOfYear = new Date(year!, 11, 31);
+
+  const [totalMes, totalAnual] = await Promise.all([
+    prisma.expense.aggregate({
+      _sum: { amount: true },
+      where: {
+        date: { gte: startOfMonth, lte: endOfMonth },
+      },
+    }),
+    prisma.expense.aggregate({
+      _sum: { amount: true },
+      where: {
+        date: { gte: startOfYear, lte: endOfYear },
+      },
+    }),
+  ]);
+
+  return {
+    totalDia: 0,
+    totalSemana: 0,
+    totalMes: totalMes._sum.amount || 0,
+    totalAnual: totalAnual._sum.amount || 0,
+  };
+}
 
 // Eliminar un egreso
 export async function deleteExpense(id: number) {
