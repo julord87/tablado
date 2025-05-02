@@ -242,6 +242,45 @@ export async function getMonthlyIncomeVsExpenseLast12Months() {
   return monthlyData;
 }
 
+export async function getDailyIncomeVsExpenseLast30Days() {
+  const now = new Date();
+  const start = new Date();
+  start.setDate(now.getDate() - 29); // incluye hoy
+
+  const dailyData = await Promise.all(
+    Array.from({ length: 30 }).map(async (_, i) => {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
+
+      const dayStart = new Date(day);
+      dayStart.setHours(0, 0, 0, 0);
+
+      const dayEnd = new Date(day);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const [incomes, expenses] = await Promise.all([
+        prisma.income.aggregate({
+          _sum: { amount: true },
+          where: { date: { gte: dayStart, lte: dayEnd } },
+        }),
+        prisma.expense.aggregate({
+          _sum: { amount: true },
+          where: { date: { gte: dayStart, lte: dayEnd } },
+        }),
+      ]);
+
+      return {
+        day: day.toISOString().split("T")[0], // formato YYYY-MM-DD
+        ingresos: incomes._sum.amount || 0,
+        egresos: expenses._sum.amount || 0,
+      };
+    })
+  );
+
+  return dailyData;
+}
+
+
 export async function getIncomeTotalsByType(year: number) {
   const start = new Date(year, 0, 1);
   const end = new Date(year, 11, 31, 23, 59, 59);

@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
   getAccountingTotals,
+  getDailyIncomeVsExpenseLast30Days,
   getIncomeTotalsByType,
   getMonthlyIncomeVsExpenseLast12Months,
 } from "@/actions";
 import {
+  DailyBalanceChart,
   ExpensePieChart,
   IncomePieChart,
   MonthlyBalanceChart,
@@ -17,8 +19,8 @@ import { getExpenseTotalsByType } from "@/actions/expensesActions";
 export default async function AccountingDashboardPage() {
   const hoy = new Date();
   const resumen = await getAccountingTotals(hoy);
-
-  const currentYear = new Date().getFullYear();
+  
+  const last30Days = await getDailyIncomeVsExpenseLast30Days();
   const monthly = await getMonthlyIncomeVsExpenseLast12Months();
 
   const year = new Date().getFullYear();
@@ -92,15 +94,16 @@ export default async function AccountingDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <Card className="bg-stone-50 lg:col-span-2">
           <CardHeader className="text-2xl">
-            <CardTitle>Balance mensual (últimos doce meses)</CardTitle>
+            <CardTitle>Balance mensual (últimos 12 meses)</CardTitle>
           </CardHeader>
           <CardContent>
             <MonthlyBalanceChart data={monthly} />
           </CardContent>
         </Card>
 
+
         <Card className="bg-stone-50">
-          <CardHeader className="text-2xl">
+          <CardHeader className="text-2xl mb-4">
             <CardTitle>Ingresos por tipo (histórico)</CardTitle>
           </CardHeader>
           <CardContent>
@@ -111,13 +114,22 @@ export default async function AccountingDashboardPage() {
         </Card>
 
         <Card className="bg-stone-50">
-          <CardHeader className="text-2xl">
+          <CardHeader className="text-2xl mb-4">
             <CardTitle>Gastos por tipo (histórico)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex justify-center items-center h-64">
               <ExpensePieChart data={expenseByType} />
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-stone-50 lg:col-span-3">
+          <CardHeader className="text-2xl">
+            <CardTitle>Balance diario (últimos 30 días)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DailyBalanceChart data={last30Days} />
           </CardContent>
         </Card>
       </div>
