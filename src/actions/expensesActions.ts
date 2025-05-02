@@ -152,6 +152,30 @@ export async function getExpenseTotals(
   };
 }
 
+export async function getExpenseTotalsByType(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year, 11, 31, 23, 59, 59);
+
+  const expenses = await prisma.expense.groupBy({
+    by: ["category"],
+    _sum: {
+      amount: true,
+    },
+    where: {
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+  });
+
+  return expenses.map((expense) => ({
+    type: expense.category,
+    amount: expense._sum.amount || 0,
+  }));
+}
+
+
 // Eliminar un egreso
 export async function deleteExpense(id: number) {
   await prisma.expense.delete({

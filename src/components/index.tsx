@@ -17,3 +17,5 @@ export * from "./admin/UsersAdminTable";
 export * from "./admin/CashClosing";
 
 export * from "./admin/MonthlyBalanceChart";
+export * from "./admin/IncomePieChart";
+export * from "./admin/ExpensePieChart";

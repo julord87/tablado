@@ -35,7 +35,9 @@ export async function getIncomesByYear(year: number) {
 }
 
 const now = new Date();
-const sevilleTime = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Madrid" }));
+const sevilleTime = new Date(
+  now.toLocaleString("en-US", { timeZone: "Europe/Madrid" })
+);
 
 export async function createIncome(data: {
   amount: number;
@@ -131,7 +133,7 @@ export async function isCashClosedForToday(): Promise<boolean> {
 
   const existingClosure = await prisma.income.findFirst({
     where: {
-      type: 'tickets_web',
+      type: "tickets_web",
       date: {
         gte: today,
         lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
@@ -150,7 +152,7 @@ export async function deleteDayCashClosure(date: Date) {
 
   const closure = await prisma.income.findFirst({
     where: {
-      type: 'tickets_web',
+      type: "tickets_web",
       date: {
         gte: startOfDay,
         lte: endOfDay,
@@ -204,11 +206,19 @@ export async function getAccountingTotals(date: Date) {
   };
 }
 
-export async function getMonthlyIncomeVsExpense(year: number) {
+export async function getMonthlyIncomeVsExpenseLast12Months() {
+  const now = new Date();
+  const months = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ year: d.getFullYear(), month: d.getMonth() });
+  }
+
   const monthlyData = await Promise.all(
-    Array.from({ length: 12 }).map(async (_, i) => {
-      const start = new Date(year, i, 1);
-      const end = new Date(year, i + 1, 0, 23, 59, 59);
+    months.map(async ({ year, month }) => {
+      const start = new Date(year, month, 1);
+      const end = new Date(year, month + 1, 0, 23, 59, 59);
 
       const [incomes, expenses] = await Promise.all([
         prisma.income.aggregate({
@@ -222,7 +232,7 @@ export async function getMonthlyIncomeVsExpense(year: number) {
       ]);
 
       return {
-        month: i + 1,
+        month: month + 1,
         ingresos: incomes._sum.amount || 0,
         egresos: expenses._sum.amount || 0,
       };
@@ -232,6 +242,23 @@ export async function getMonthlyIncomeVsExpense(year: number) {
   return monthlyData;
 }
 
+export async function getIncomeTotalsByType(year: number) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year, 11, 31, 23, 59, 59);
+
+  const result = await prisma.income.groupBy({
+    by: ["type"],
+    where: {
+      date: { gte: start, lte: end },
+    },
+    _sum: { amount: true },
+  });
+
+  return result.map((r) => ({
+    type: r.type ?? "Sin tipo",
+    amount: r._sum.amount || 0,
+  }));
+}
 
 export async function deleteIncome(id: number) {
   await prisma.income.delete({
