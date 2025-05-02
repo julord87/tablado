@@ -2,6 +2,7 @@
 
 import { prisma } from "../../prisma/lib/prisma";
 import { IncomeType } from "@prisma/client";
+import { getExpenseTotals } from "./expensesActions";
 
 export async function getIncomesByMonth(month: number, year: number) {
   const start = new Date(year, month - 1, 1);
@@ -164,6 +165,72 @@ export async function deleteDayCashClosure(date: Date) {
   }
 }
 
+// accountingActions.ts
+export async function getAccountingTotals(date: Date) {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  const startOfYear = new Date(date.getFullYear(), 0, 1);
+  const endOfYear = new Date(date.getFullYear(), 11, 31);
+
+  const [incomeDay, incomeMonth, incomeYear] = await Promise.all([
+    prisma.income.aggregate({
+      _sum: { amount: true },
+      where: { date: { gte: startOfDay, lte: endOfDay } },
+    }),
+    prisma.income.aggregate({
+      _sum: { amount: true },
+      where: { date: { gte: startOfMonth, lte: endOfMonth } },
+    }),
+    prisma.income.aggregate({
+      _sum: { amount: true },
+      where: { date: { gte: startOfYear, lte: endOfYear } },
+    }),
+  ]);
+
+  const { totalDia, totalMes, totalAnual } = await getExpenseTotals(date);
+
+  return {
+    ingresosHoy: incomeDay._sum.amount || 0,
+    egresosHoy: totalDia,
+    balanceMes: (incomeMonth._sum.amount || 0) - totalMes,
+    balanceAnual: (incomeYear._sum.amount || 0) - totalAnual,
+  };
+}
+
+export async function getMonthlyIncomeVsExpense(year: number) {
+  const monthlyData = await Promise.all(
+    Array.from({ length: 12 }).map(async (_, i) => {
+      const start = new Date(year, i, 1);
+      const end = new Date(year, i + 1, 0, 23, 59, 59);
+
+      const [incomes, expenses] = await Promise.all([
+        prisma.income.aggregate({
+          _sum: { amount: true },
+          where: { date: { gte: start, lte: end } },
+        }),
+        prisma.expense.aggregate({
+          _sum: { amount: true },
+          where: { date: { gte: start, lte: end } },
+        }),
+      ]);
+
+      return {
+        month: i + 1,
+        ingresos: incomes._sum.amount || 0,
+        egresos: expenses._sum.amount || 0,
+      };
+    })
+  );
+
+  return monthlyData;
+}
 
 
 export async function deleteIncome(id: number) {

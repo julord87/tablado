@@ -15,3 +15,5 @@ export * from "./admin/DeleteShowButton";
 export * from "./admin/UsersAdminTable";
 
 export * from "./admin/CashClosing";
+
+export * from "./admin/MonthlyBalanceChart";

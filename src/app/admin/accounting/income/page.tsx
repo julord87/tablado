@@ -197,13 +197,13 @@ export default function IncomePage() {
         <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del mes</p>
           <p className="text-xl font-bold">
-            ${totalMes.toLocaleString("es-ES")}
+            ${totalMes.toFixed(2)}
           </p>
         </div>
         <div className="bg-purple-100 text-purple-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total año</p>
           <p className="text-xl font-bold">
-            ${totalAnual.toLocaleString("es-ES")}
+            ${totalAnual.toFixed(2)}
           </p>
         </div>
       </div>
