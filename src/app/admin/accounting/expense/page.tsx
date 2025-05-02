@@ -104,6 +104,20 @@ export default function ExpensePage() {
     setYear(date.getFullYear());
   };
 
+  const nextMonthYear = () => {
+    const nextDate = new Date(year, month - 1, 1); // 👈 esto es correcto
+    nextDate.setMonth(nextDate.getMonth() + 1);
+    setMonth(nextDate.getMonth() + 1); // 👈 recordá devolverlo a base 1
+    setYear(nextDate.getFullYear());
+  };
+
+  const prevMonthYear = () => {
+    const prevDate = new Date(year, month - 1, 1); // 👈 esto es correcto
+    prevDate.setMonth(prevDate.getMonth() - 1);
+    setMonth(prevDate.getMonth() + 1); // 👈 recordá devolverlo a base 1
+    setYear(prevDate.getFullYear());
+  };
+
   const handleEdit = (expense: any) => {
     setAmount(expense.amount.toString());
     setCategory(expense.category);
@@ -159,7 +173,9 @@ export default function ExpensePage() {
         </div>
         <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Últimos 7 días</p>
-          <p className="text-xl font-bold">${totales.totalSemana.toFixed(2)}</p>
+          <p className="text-xl font-bold">
+            {selectedDay ? `${totales.totalSemana.toFixed(2)}` : "--"}
+          </p>
         </div>
         <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del mes</p>
@@ -199,6 +215,8 @@ export default function ExpensePage() {
                     prev.setDate(prev.getDate() - 1);
                     setSelectedDay(format(prev, "yyyy-MM-dd"));
                     updateMonthYearFromDate(prev);
+                  } else {
+                    prevMonthYear();
                   }
                 }}
               >
@@ -212,6 +230,8 @@ export default function ExpensePage() {
                     prev.setDate(prev.getDate() + 1);
                     setSelectedDay(format(prev, "yyyy-MM-dd"));
                     updateMonthYearFromDate(prev);
+                  } else {
+                    nextMonthYear();
                   }
                 }}
               >
@@ -244,7 +264,8 @@ export default function ExpensePage() {
           className="border p-2 rounded"
         >
           {Array.from({ length: 5 }).map((_, i) => {
-            const y = today.getFullYear() - i;
+            const baseYear = Math.max(today.getFullYear(), year);
+            const y = baseYear - (4 - i);
             return (
               <option key={y} value={y}>
                 {y}

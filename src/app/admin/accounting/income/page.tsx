@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { format, isWithinInterval, subDays } from "date-fns";
+import { format, isWithinInterval, subDays, isSameDay } from "date-fns";
 import {
   getIncomesByMonth,
   createIncome,
@@ -69,6 +69,20 @@ export default function IncomePage() {
     setMonth(date.getMonth() + 1);
     setYear(date.getFullYear());
   };
+  
+  const updateMonthYearToPrev = () => {
+    const prevMonth = month === 1 ? 12 : month - 1;
+    const prevYear = month === 1 ? year - 1 : year;
+    setMonth(prevMonth);
+    setYear(prevYear);
+  };
+
+  const updateMonthYearToNext = () => {
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    setMonth(nextMonth);
+    setYear(nextYear);
+  };
 
   const totalMes = allMonthIncomes.reduce((acc, curr) => acc + curr.amount, 0);
 
@@ -76,8 +90,8 @@ export default function IncomePage() {
     getIncomesByMonth(month, year).then((allIncomes) => {
       setAllMonthIncomes(allIncomes);
       if (selectedDay) {
-        const filtered = allIncomes.filter(
-          (i) => format(new Date(i.date), "yyyy-MM-dd") === selectedDay
+        const filtered = allIncomes.filter((i) =>
+          isSameDay(new Date(i.date), baseDate)
         );
         setIncomes(filtered);
       } else {
@@ -170,11 +184,15 @@ export default function IncomePage() {
       <div className="flex gap-4 mb-4 font-sans">
         <div className="bg-green-100 text-green-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del día</p>
-          <p className="text-xl font-bold">${totalDia.toFixed(2)}</p>
+          <p className="text-xl font-bold">
+            {selectedDay ? `$${totalDia.toFixed(2)}` : "--"}
+          </p>
         </div>
         <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Últimos 7 días</p>
-          <p className="text-xl font-bold">${totalSemana.toFixed(2)}</p>
+          <p className="text-xl font-bold">
+            {selectedDay ? `$${totalSemana.toFixed(2)}` : "--"}
+          </p>
         </div>
         <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del mes</p>
@@ -197,6 +215,12 @@ export default function IncomePage() {
           onChange={(e) => {
             const value = e.target.value;
             setSelectedDay(value || null);
+            setMonth(
+              selectedDay ? parseInt(value.split("-")[1]) : today.getMonth() + 1
+            );
+            setYear(
+              selectedDay ? parseInt(value.split("-")[0]) : today.getFullYear()
+            );
           }}
           className="p-2 rounded border"
         />
@@ -209,6 +233,10 @@ export default function IncomePage() {
                 const prev = new Date(selectedDay);
                 prev.setDate(prev.getDate() - 1);
                 setSelectedDay(format(prev, "yyyy-MM-dd"));
+                setMonth(parseInt(prev.toISOString().split("-")[1]));
+                setYear(parseInt(prev.toISOString().split("-")[0]));
+              } else {
+                updateMonthYearToPrev();
               }
             }}
           >
@@ -221,6 +249,10 @@ export default function IncomePage() {
                 const next = new Date(selectedDay);
                 next.setDate(next.getDate() + 1);
                 setSelectedDay(format(next, "yyyy-MM-dd"));
+                setMonth(parseInt(next.toISOString().split("-")[1]));
+                setYear(parseInt(next.toISOString().split("-")[0]));
+              } else {
+                updateMonthYearToNext();
               }
             }}
           >
@@ -260,14 +292,16 @@ export default function IncomePage() {
           }}
           className="border p-2 rounded"
         >
-          {Array.from({ length: 5 }).map((_, i) => {
-            const y = today.getFullYear() - i;
-            return (
+          {Array.from({ length: 7 })
+            .map((_, i) => today.getFullYear() - 3 + i)
+            .concat(year) // incluye siempre el año actual si no está
+            .filter((y, i, arr) => arr.indexOf(y) === i) // evitar duplicados
+            .sort((a, b) => b - a) // orden descendente si querés
+            .map((y) => (
               <option key={y} value={y}>
                 {y}
               </option>
-            );
-          })}
+            ))}
         </select>
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
