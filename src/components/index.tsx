@@ -20,3 +20,4 @@ export * from "./admin/MonthlyBalanceChart";
 export * from "./admin/IncomePieChart";
 export * from "./admin/ExpensePieChart";
 export * from "./admin/Last30DaysBarChart";
+export * from "./admin/TicketTipeIncomePieChart";

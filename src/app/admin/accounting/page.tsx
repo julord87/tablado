@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   getAccountingTotals,
   getDailyIncomeVsExpenseLast30Days,
+  getIncomeByTicketType,
   getIncomeTotalsByType,
   getMonthlyIncomeVsExpenseLast12Months,
 } from "@/actions";
@@ -13,6 +14,7 @@ import {
   ExpensePieChart,
   IncomePieChart,
   MonthlyBalanceChart,
+  TicketTypeIncomePieChart,
 } from "@/components";
 import { getExpenseTotalsByType } from "@/actions/expensesActions";
 
@@ -26,6 +28,7 @@ export default async function AccountingDashboardPage() {
   const year = new Date().getFullYear();
   const incomeByType = await getIncomeTotalsByType(year);
   const expenseByType = await getExpenseTotalsByType(year);
+  const ticketTypeIncome = await getIncomeByTicketType();
 
   return (
     <div className="space-y-6 m-8">
@@ -120,6 +123,17 @@ export default async function AccountingDashboardPage() {
           <CardContent>
             <div className="flex justify-center items-center h-64">
               <ExpensePieChart data={expenseByType} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-stone-50">
+          <CardHeader className="text-2xl mb-4">
+            <CardTitle>Venta de tickets por tipo (histórico)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-center items-center h-64">
+              <TicketTypeIncomePieChart data={ticketTypeIncome} />
             </div>
           </CardContent>
         </Card>

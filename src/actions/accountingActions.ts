@@ -3,6 +3,7 @@
 import { prisma } from "../../prisma/lib/prisma";
 import { IncomeType } from "@prisma/client";
 import { getExpenseTotals } from "./expensesActions";
+import { getTicketTypes } from "./ticketTypeActions";
 
 export async function getIncomesByMonth(month: number, year: number) {
   const start = new Date(year, month - 1, 1);
@@ -296,6 +297,42 @@ export async function getIncomeTotalsByType(year: number) {
   return result.map((r) => ({
     type: r.type ?? "Sin tipo",
     amount: r._sum.amount || 0,
+  }));
+}
+
+export async function getIncomeByTicketType() {
+  const items = await prisma.reservationItem.findMany({
+    where: {
+      reservation: {
+        createdAt: {
+          gte: new Date(new Date().setDate(new Date().getDate() - 30)), // últimos 30 días
+        },
+      },
+    },
+    include: {
+      type: true,
+      reservation: true, // 👈 Necesario para poder filtrar por fecha
+    },
+  });
+
+  const incomeByType: Record<string, { amount: number; quantity: number }> = {};
+
+  for (const i of items) {
+    const typeName = i.type?.name || "Otro";
+    const totalAmount = i.type?.price ? i.quantity * i.type.price : 0;
+
+    if (!incomeByType[typeName]) {
+      incomeByType[typeName] = { amount: 0, quantity: 0 };
+    }
+
+    incomeByType[typeName].amount += totalAmount;
+    incomeByType[typeName].quantity += i.quantity;
+  }
+
+  return Object.entries(incomeByType).map(([type, data]) => ({
+    type,
+    amount: data.amount,
+    quantity: data.quantity,
   }));
 }
 
