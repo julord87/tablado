@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BarChart,
+  ComposedChart,
   Bar,
   XAxis,
   YAxis,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Line,
 } from "recharts";
 
 type Props = {
@@ -20,20 +21,29 @@ export function DailyBalanceChart({ data }: Props) {
     name: d.day.slice(5), // MM-DD
     Ingresos: d.ingresos,
     Egresos: d.egresos,
+    Balance: d.ingresos - d.egresos,
   }));
 
   return (
     <div className="w-full h-96 font-sans">
       <ResponsiveContainer>
-        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+        <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" interval={4} /> {/* muestra cada 4 días */}
+          <XAxis dataKey="name" interval={4} />
           <YAxis />
           <Tooltip formatter={(value) => `€ ${Number(value).toFixed(2)}`} />
           <Legend />
           <Bar dataKey="Ingresos" fill="#4ade80" radius={[4, 4, 0, 0]} />
           <Bar dataKey="Egresos" fill="#f87171" radius={[4, 4, 0, 0]} />
-        </BarChart>
+          <Line
+            type="monotone"
+            dataKey="Balance"
+            stroke="#1d4ed8"
+            strokeWidth={2}
+            dot={{ r: 2 }}
+            activeDot={{ r: 4 }}
+          />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );

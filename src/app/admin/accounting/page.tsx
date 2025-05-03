@@ -21,7 +21,7 @@ import { getExpenseTotalsByType } from "@/actions/expensesActions";
 export default async function AccountingDashboardPage() {
   const hoy = new Date();
   const resumen = await getAccountingTotals(hoy);
-  
+
   const last30Days = await getDailyIncomeVsExpenseLast30Days();
   const monthly = await getMonthlyIncomeVsExpenseLast12Months();
 
@@ -77,7 +77,9 @@ export default async function AccountingDashboardPage() {
         </Link>
         <Card>
           <CardContent className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow">
-            <p className="text-sm text-muted-foreground">Balance mes</p>
+            <p className="text-sm text-muted-foreground">
+              Balance mes corriente
+            </p>
             <p className="text-xl font-bold">
               € {resumen.balanceMes.toFixed(2)}
             </p>
@@ -85,9 +87,11 @@ export default async function AccountingDashboardPage() {
         </Card>
         <Card>
           <CardContent className="bg-purple-100 text-purple-800 p-4 rounded-xl shadow">
-            <p className="text-sm text-muted-foreground">Balance anual</p>
+            <p className="text-sm text-muted-foreground">
+              Balance últimos 12 meses
+            </p>
             <p className="text-xl font-bold">
-              € {resumen.balanceAnual.toFixed(2)}
+              € {resumen.balance12Meses.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -104,13 +108,12 @@ export default async function AccountingDashboardPage() {
           </CardContent>
         </Card>
 
-
         <Card className="bg-stone-50">
           <CardHeader className="text-2xl mb-4">
             <CardTitle>Ingresos por tipo (histórico)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-72">
               <IncomePieChart data={incomeByType} />
             </div>
           </CardContent>
@@ -121,7 +124,7 @@ export default async function AccountingDashboardPage() {
             <CardTitle>Gastos por tipo (histórico)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-72">
               <ExpensePieChart data={expenseByType} />
             </div>
           </CardContent>
@@ -132,7 +135,7 @@ export default async function AccountingDashboardPage() {
             <CardTitle>Venta de tickets por tipo (histórico)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-72">
               <TicketTypeIncomePieChart data={ticketTypeIncome} />
             </div>
           </CardContent>

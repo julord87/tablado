@@ -197,6 +197,20 @@ export async function getAccountingTotals(date: Date) {
     }),
   ]);
 
+  const twelveMonthsAgo = new Date(date);
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+  const [incomeLast12, expenseLast12] = await Promise.all([
+    prisma.income.aggregate({
+      _sum: { amount: true },
+      where: { date: { gte: twelveMonthsAgo, lte: date } },
+    }),
+    prisma.expense.aggregate({
+      _sum: { amount: true },
+      where: { date: { gte: twelveMonthsAgo, lte: date } },
+    }),
+  ]);
+
   const { totalDia, totalMes, totalAnual } = await getExpenseTotals(date);
 
   return {
@@ -204,6 +218,7 @@ export async function getAccountingTotals(date: Date) {
     egresosHoy: totalDia,
     balanceMes: (incomeMonth._sum.amount || 0) - totalMes,
     balanceAnual: (incomeYear._sum.amount || 0) - totalAnual,
+    balance12Meses: (incomeLast12._sum.amount || 0) - (expenseLast12._sum.amount || 0),
   };
 }
 
@@ -280,7 +295,6 @@ export async function getDailyIncomeVsExpenseLast30Days() {
 
   return dailyData;
 }
-
 
 export async function getIncomeTotalsByType(year: number) {
   const start = new Date(year, 0, 1);
