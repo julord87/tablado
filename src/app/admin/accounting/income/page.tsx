@@ -35,8 +35,8 @@ export default function IncomePage() {
   const [totalAnual, setTotalAnual] = useState(0);
   const [incomes, setIncomes] = useState<any[]>([]);
   const [type, setType] = useState<IncomeType>(IncomeType.barra);
+  const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [source, setSource] = useState("");
   const [date, setDate] = useState(format(today, "yyyy-MM-dd"));
   const [refresh, setRefresh] = useState(false);
   const [allMonthIncomes, setAllMonthIncomes] = useState<any[]>([]);
@@ -69,7 +69,7 @@ export default function IncomePage() {
     setMonth(date.getMonth() + 1);
     setYear(date.getFullYear());
   };
-  
+
   const updateMonthYearToPrev = () => {
     const prevMonth = month === 1 ? 12 : month - 1;
     const prevYear = month === 1 ? year - 1 : year;
@@ -120,16 +120,16 @@ export default function IncomePage() {
   }, [selectedDay, refresh]);
 
   const handleSubmit = async () => {
-    if (!amount || !source || !date) return alert("Faltan datos");
+    if (!amount || !description || !date) return alert("Faltan datos");
 
     const localDate = new Date(date);
     localDate.setHours(0, 0, 0, 0); // fuerza a las 00:00 local
 
     const payload = {
       amount: parseFloat(amount),
-      source,
-      date: localDate.toISOString(), // o directamente `localDate`
+      date: localDate.toISOString(),
       type,
+      description: description || null,
     };
 
     if (isEditing && editingIncomeId !== null) {
@@ -147,11 +147,11 @@ export default function IncomePage() {
 
   const handleEdit = (income: any) => {
     setAmount(income.amount.toString());
-    setSource(income.source);
     setDate(format(new Date(income.date), "yyyy-MM-dd"));
     setEditingIncomeId(income.id);
     setIsEditing(true);
     setDialogOpen(true);
+    setDescription(income.description || "");
   };
 
   const handleDelete = async (id: number) => {
@@ -164,10 +164,10 @@ export default function IncomePage() {
 
   const resetForm = () => {
     setAmount("");
-    setSource("");
     setDate(format(today, "yyyy-MM-dd"));
     setEditingIncomeId(null);
     setIsEditing(false);
+    setDescription("");
   };
 
   return (
@@ -196,15 +196,11 @@ export default function IncomePage() {
         </div>
         <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del mes</p>
-          <p className="text-xl font-bold">
-            ${totalMes.toFixed(2)}
-          </p>
+          <p className="text-xl font-bold">${totalMes.toFixed(2)}</p>
         </div>
         <div className="bg-purple-100 text-purple-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total año</p>
-          <p className="text-xl font-bold">
-            ${totalAnual.toFixed(2)}
-          </p>
+          <p className="text-xl font-bold">${totalAnual.toFixed(2)}</p>
         </div>
       </div>
 
@@ -323,11 +319,6 @@ export default function IncomePage() {
             </DialogHeader>
             <div className="space-y-4 font-sans">
               <div>
-                <Label>Origen</Label>
-                <Input
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                />
                 <div>
                   <Label>Monto</Label>
                   <Input
@@ -339,14 +330,20 @@ export default function IncomePage() {
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value as IncomeType)}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded capitalize"
                   >
-                    {incomeTypes.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
+                    {Object.values(IncomeType).map((value) => (
+                      <option key={value} value={value} className="capitalize">
+                        {value}
                       </option>
                     ))}
                   </select>
+                  <Label>Descripcion</Label>
+                  <Input
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
                 </div>
               </div>
               <div>
@@ -376,8 +373,8 @@ export default function IncomePage() {
         <thead>
           <tr className="bg-gray-100">
             <th className="border px-2 py-1 text-left">Fecha</th>
-            <th className="border px-2 py-1 text-left">Origen</th>
             <th className="border px-2 py-1 text-left">Tipo</th>
+            <th className="border px-2 py-1 text-left">Descripcion</th>
             <th className="border px-2 py-1 text-left">Monto</th>
             <th className="border px-2 py-1 text-left">Acciones</th>
           </tr>
@@ -388,8 +385,10 @@ export default function IncomePage() {
               <td className="border px-2 py-1">
                 {format(new Date(income.date), "dd/MM/yyyy" + " HH:mm:ss")}
               </td>
-              <td className="border px-2 py-1">{income.source}</td>
               <td className="border px-2 py-1 capitalize">{income.type}</td>
+              <td className="border px-2 py-1">
+                {income.description || "Sin descripción"}
+              </td>
               <td className="border px-2 py-1">${income.amount.toFixed(2)}</td>
               <td className="border px-2 py-1 space-x-2">
                 <Button size="sm" onClick={() => handleEdit(income)}>

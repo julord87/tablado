@@ -69,13 +69,13 @@ enum IncomeType {
 }
 
 model Income {
-  id     Int         @id @default(autoincrement())
-  amount Float
-  source String
-  date   DateTime    @default(now())
-  type   IncomeType?
-  showId Int?
-  show   Show?       @relation(fields: [showId], references: [id])
+  id          Int         @id @default(autoincrement())
+  amount      Float
+  date        DateTime    @default(now())
+  type        IncomeType?
+  description String?
+  showId      Int?
+  show        Show?       @relation(fields: [showId], references: [id])
 }
 
 enum ExpenseCategory {

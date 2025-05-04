@@ -42,17 +42,19 @@ const sevilleTime = new Date(
 
 export async function createIncome(data: {
   amount: number;
-  source: string;
   date: string;
   type: IncomeType;
+  description?: string | null;
 }) {
-  const { amount, source, date, type } = data;
+  const { amount, date, type, description } = data;
+  const sevilleTime = new Date(date); // Si ya lo calculás afuera, mantenelo así
+
   await prisma.income.create({
     data: {
       amount,
-      source,
       date: sevilleTime,
       type,
+      description,
     },
   });
 }
@@ -61,20 +63,14 @@ export async function updateIncome(
   id: number,
   data: Partial<{
     amount: number;
-    source: string;
     date: string;
     type: IncomeType;
+    description: string | null;
   }>
 ) {
-  const { amount, source, date, type } = data;
   await prisma.income.update({
     where: { id },
-    data: {
-      ...(amount && { amount }),
-      ...(source && { source }),
-      ...(date && { date: new Date(date) }),
-      ...(type && { type }),
-    },
+    data,
   });
 }
 
@@ -120,7 +116,7 @@ export async function closeCashForDay(date: Date): Promise<number | null> {
     data: {
       amount: total,
       type: "tickets_web",
-      source: `Cierre de caja ventas web del ${formattedDate}`,
+      description: `Cierre de caja ventas web del ${formattedDate}`,
       date: new Date(),
     },
   });
@@ -218,7 +214,8 @@ export async function getAccountingTotals(date: Date) {
     egresosHoy: totalDia,
     balanceMes: (incomeMonth._sum.amount || 0) - totalMes,
     balanceAnual: (incomeYear._sum.amount || 0) - totalAnual,
-    balance12Meses: (incomeLast12._sum.amount || 0) - (expenseLast12._sum.amount || 0),
+    balance12Meses:
+      (incomeLast12._sum.amount || 0) - (expenseLast12._sum.amount || 0),
   };
 }
 
@@ -348,6 +345,19 @@ export async function getIncomeByTicketType() {
     amount: data.amount,
     quantity: data.quantity,
   }));
+}
+
+export async function getLastIncomes(limit = 5) {
+  return prisma.income.findMany({
+    take: limit,
+    orderBy: { date: "desc" },
+    select: {
+      id: true,
+      description: true,
+      amount: true,
+      date: true,
+    },
+  });
 }
 
 export async function deleteIncome(id: number) {
