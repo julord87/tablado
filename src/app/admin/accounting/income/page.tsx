@@ -21,8 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getFormattedTitle, numberToMonth } from "../../../../../helpers";
-import { incomeTypes } from "../../../../../utils/incomeTypes";
-import { IncomeType } from "@prisma/client";
+import { IncomeType, PaymentMethod } from "@prisma/client";
 import { CloseDayCashButton } from "@/components";
 
 export default function IncomePage() {
@@ -41,6 +40,7 @@ export default function IncomePage() {
   const [refresh, setRefresh] = useState(false);
   const [allMonthIncomes, setAllMonthIncomes] = useState<any[]>([]);
   const [isCashClosed, setIsCashClosed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -130,6 +130,7 @@ export default function IncomePage() {
       date: localDate.toISOString(),
       type,
       description: description || null,
+      paymentMethod: paymentMethod || null,
     };
 
     if (isEditing && editingIncomeId !== null) {
@@ -326,6 +327,19 @@ export default function IncomePage() {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                   />
+                  <Label>Método de pago</Label>
+                  <select
+                    value={paymentMethod ?? ""}
+                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                    className="w-full p-2 border rounded capitalize"
+                  >
+                    {Object.values(PaymentMethod).map((value) => (
+                      <option key={value} value={value} className="capitalize">
+                        {value}
+                      </option>
+                    ))}
+                    {/* Agregá los que uses */}
+                  </select>
                   <Label>Tipo</Label>
                   <select
                     value={type}

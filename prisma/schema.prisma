@@ -68,11 +68,20 @@ enum IncomeType {
 }
 
 model Income {
-  id          Int         @id @default(autoincrement())
-  amount      Float
-  date        DateTime    @default(now())
-  type        IncomeType?
-  description String?
+  id            Int            @id @default(autoincrement())
+  amount        Float
+  date          DateTime       @default(now())
+  type          IncomeType?
+  paymentMethod PaymentMethod?
+  description   String?
+}
+
+enum PaymentMethod {
+  efectivo
+  tarjeta
+  bizum
+  transferencia
+  otro
 }
 
 enum ExpenseCategory {

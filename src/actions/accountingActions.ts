@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "../../prisma/lib/prisma";
-import { IncomeType } from "@prisma/client";
+import { IncomeType, PaymentMethod } from "@prisma/client";
 import { getExpenseTotals } from "./expensesActions";
 
 export async function getIncomesByMonth(month: number, year: number) {
@@ -44,8 +44,9 @@ export async function createIncome(data: {
   date: string;
   type: IncomeType;
   description?: string | null;
+  paymentMethod: PaymentMethod | null;
 }) {
-  const { amount, date, type, description } = data;
+  const { amount, date, type, description, paymentMethod } = data;
   const sevilleTime = new Date(date); // Si ya lo calculás afuera, mantenelo así
 
   await prisma.income.create({
@@ -54,6 +55,7 @@ export async function createIncome(data: {
       date: sevilleTime,
       type,
       description,
+      paymentMethod,
     },
   });
 }
@@ -65,6 +67,7 @@ export async function updateIncome(
     date: string;
     type: IncomeType;
     description: string | null;
+    paymentMethod: PaymentMethod | null;
   }>
 ) {
   await prisma.income.update({
@@ -359,6 +362,42 @@ export async function getLastIncomes(limit = 5) {
   });
 }
 
+export async function getAverageDailyIncome() {
+  const from = new Date();
+  from.setDate(from.getDate() - 30);
+
+  const daily = await prisma.income.groupBy({
+    by: ["date"],
+    where: {
+      date: {
+        gte: from,
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const total = daily.reduce((acc, d) => acc + (d._sum.amount || 0), 0);
+  const average = daily.length > 0 ? total / daily.length : 0;
+
+  return { average };
+}
+
+
+export async function getIncomeByPaymentMethod() {
+  const result = await prisma.income.groupBy({
+    by: ["paymentMethod"],
+    _sum: {
+      amount: true,
+    },
+  });
+
+  return result.map((item) => ({
+    method: item.paymentMethod ?? "Sin especificar",
+    total: item._sum.amount ?? 0,
+  }));
+}
 export async function deleteIncome(id: number) {
   await prisma.income.delete({
     where: { id },
