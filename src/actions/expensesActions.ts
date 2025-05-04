@@ -175,6 +175,19 @@ export async function getExpenseTotalsByType(year: number) {
   }));
 }
 
+// En expensesActions.ts
+export async function getLastExpenses(limit = 5) {
+  return prisma.expense.findMany({
+    take: limit,
+    orderBy: { date: "desc" },
+    select: {
+      id: true,
+      description: true,
+      amount: true,
+      date: true,
+    },
+  });
+}
 
 // Eliminar un egreso
 export async function deleteExpense(id: number) {

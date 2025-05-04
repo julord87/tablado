@@ -17,6 +17,7 @@ import {
   TicketTypeIncomePieChart,
 } from "@/components";
 import { getExpenseTotalsByType } from "@/actions/expensesActions";
+import LastMovements from '../../../components/admin/LastAccountings.Cards';
 
 export default async function AccountingDashboardPage() {
   const hoy = new Date();
@@ -152,34 +153,7 @@ export default async function AccountingDashboardPage() {
       </div>
 
       {/* Últimos movimientos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="bg-stone-50">
-          <CardContent className="p-4">
-            <p className="font-semibold mb-2">Últimos ingresos</p>
-            {/* TODO: map últimos ingresos */}
-            <p className="text-sm text-muted-foreground">
-              [Ingresos recientes]
-            </p>
-            <Link href="/admin/accounting/income">
-              <Button className="font-sans" variant="link">
-                Ver todos
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <p className="font-semibold mb-2">Últimos egresos</p>
-            {/* TODO: map últimos egresos */}
-            <p className="text-sm text-muted-foreground">[Egresos recientes]</p>
-            <Link href="/admin/accounting/expense">
-              <Button className="font-sans" variant="link">
-                Ver todos
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+      <LastMovements />
 
       {/* Cierre de caja */}
       <Card>
