@@ -88,10 +88,10 @@ export default async function AccountingDashboardPage() {
         <Card>
           <CardContent className="bg-purple-100 text-purple-800 p-4 rounded-xl shadow">
             <p className="text-sm text-muted-foreground">
-              Balance últimos 12 meses
+              Balance año corriente
             </p>
             <p className="text-xl font-bold">
-              € {resumen.balance12Meses.toFixed(2)}
+              € {resumen.balanceAnual.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -112,7 +112,7 @@ export default async function AccountingDashboardPage() {
           <CardHeader className="text-2xl mb-4">
             <CardTitle>Ingresos por tipo (histórico)</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mb-20">
             <div className="flex justify-center items-center h-72">
               <IncomePieChart data={incomeByType} />
             </div>
@@ -123,7 +123,7 @@ export default async function AccountingDashboardPage() {
           <CardHeader className="text-2xl mb-4">
             <CardTitle>Gastos por tipo (histórico)</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mb-20">
             <div className="flex justify-center items-center h-72">
               <ExpensePieChart data={expenseByType} />
             </div>
@@ -134,7 +134,7 @@ export default async function AccountingDashboardPage() {
           <CardHeader className="text-2xl mb-4">
             <CardTitle>Venta de tickets por tipo (histórico)</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-6 mb-20">
             <div className="flex justify-center items-center h-72">
               <TicketTypeIncomePieChart data={ticketTypeIncome} />
             </div>

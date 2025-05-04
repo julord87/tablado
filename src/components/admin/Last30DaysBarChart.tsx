@@ -45,6 +45,12 @@ export function DailyBalanceChart({ data }: Props) {
           />
         </ComposedChart>
       </ResponsiveContainer>
+      <div className="text-center text-sm text-muted-foreground">
+        Balance del mes: €{" "}
+        {chartData.reduce((sum, d) => {
+          return sum + d.Balance;
+        }, 0).toFixed(2)}
+      </div>
     </div>
   );
 }

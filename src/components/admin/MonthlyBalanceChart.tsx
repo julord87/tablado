@@ -29,7 +29,7 @@ export function MonthlyBalanceChart({ data }: Props) {
   return (
     <div className="w-full h-96 font-sans">
       <ResponsiveContainer>
-        <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+        <ComposedChart data={chartData} margin={{ top: 15, right: 30, left: 10, bottom: 6 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -47,6 +47,14 @@ export function MonthlyBalanceChart({ data }: Props) {
           />
         </ComposedChart>
       </ResponsiveContainer>
+      <div className="text-center text-sm text-muted-foreground">
+        <p>
+          Balance ult. doce meses: €{" "}
+          {chartData.reduce((sum, d) => {
+            return sum + d.Balance;
+          }, 0).toFixed(2)}
+        </p>
+      </div>
     </div>
   );
 }
