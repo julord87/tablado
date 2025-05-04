@@ -3,7 +3,6 @@
 import { prisma } from "../../prisma/lib/prisma";
 import { IncomeType } from "@prisma/client";
 import { getExpenseTotals } from "./expensesActions";
-import { getTicketTypes } from "./ticketTypeActions";
 
 export async function getIncomesByMonth(month: number, year: number) {
   const start = new Date(year, month - 1, 1);

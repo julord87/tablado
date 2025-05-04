@@ -15,7 +15,6 @@ model Show {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Reservation Reservation[]
-  Income      Income[]
 
   @@unique([date, time])
 }
@@ -74,8 +73,6 @@ model Income {
   date        DateTime    @default(now())
   type        IncomeType?
   description String?
-  showId      Int?
-  show        Show?       @relation(fields: [showId], references: [id])
 }
 
 enum ExpenseCategory {
