@@ -401,6 +401,7 @@ export default function IncomePage() {
             <th className="border px-2 py-1 text-left">Fecha</th>
             <th className="border px-2 py-1 text-left">Tipo</th>
             <th className="border px-2 py-1 text-left">Descripcion</th>
+            <th className="border px-2 py-1 text-left">Creado por</th>
             <th className="border px-2 py-1 text-left">Monto</th>
             <th className="border px-2 py-1 text-left">Acciones</th>
           </tr>
@@ -415,6 +416,8 @@ export default function IncomePage() {
               <td className="border px-2 py-1">
                 {income.description || "Sin descripción"}
               </td>
+              <td className="border px-2 py-1">{income?.user.name || "Desconocido"}</td>
+              {/* Cambia esto por el nombre del usuario que creó el ingreso */}
               <td className="border px-2 py-1">${income.amount.toFixed(2)}</td>
               <td className="border px-2 py-1 space-x-2">
                 <Button size="sm" onClick={() => handleEdit(income)}>
@@ -433,7 +436,7 @@ export default function IncomePage() {
         </tbody>
         <tfoot>
           <tr className="bg-gray-50 font-semibold text-lg">
-            <td colSpan={3} className="border px-2 py-1 text-right">
+            <td colSpan={4} className="border px-2 py-1 text-right">
               Total
             </td>
             <td className="border px-2 py-1">

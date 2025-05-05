@@ -3,6 +3,7 @@
 import { ExpenseCategory } from "@prisma/client";
 import { prisma } from "../../prisma/lib";
 import { revalidatePath } from "next/cache";
+import { auth } from "../../auth";
 
 // Obtener todos los egresos de un mes y año
 export async function getExpensesByMonth(month: number, year: number) {
@@ -15,6 +16,9 @@ export async function getExpensesByMonth(month: number, year: number) {
         gte: start,
         lte: end,
       },
+    },
+    include: {
+      user: true, // 👈 Esto incluye el nombre del usuario (si hay)
     },
     orderBy: {
       date: "desc",
@@ -31,17 +35,22 @@ export async function createExpense(data: {
   description?: string;
   date: string;
 }) {
+  const session = await auth();
+  const userId = session?.user?.id ? parseInt(session.user.id, 10) : undefined;
+
   await prisma.expense.create({
     data: {
       amount: data.amount,
       category: data.category as ExpenseCategory,
       description: data.description,
       date: new Date(data.date),
+      userId: userId
     },
   });
 
   revalidatePath("/admin/accounting/expense");
 }
+
 
 // Editar un egreso
 export async function updateExpense(
@@ -53,6 +62,9 @@ export async function updateExpense(
     date: string;
   }
 ) {
+  const session = await auth();
+  const userId = session?.user?.id ? parseInt(session.user.id, 10) : undefined;
+
   await prisma.expense.update({
     where: { id },
     data: {
@@ -60,6 +72,7 @@ export async function updateExpense(
       category: data.category as ExpenseCategory,
       description: data.description,
       date: new Date(data.date),
+      userId: userId, 
     },
   });
 

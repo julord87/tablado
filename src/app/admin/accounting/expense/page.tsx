@@ -337,6 +337,7 @@ export default function ExpensePage() {
             <th className="border px-2 py-1 text-left">Fecha</th>
             <th className="border px-2 py-1 text-left">Categoría</th>
             <th className="border px-2 py-1 text-left">Descripción</th>
+            <th className="border px-2 py-1 text-left">Creado por</th>
             <th className="border px-2 py-1 text-left">Monto</th>
             <th className="border px-2 py-1 text-left">Acciones</th>
           </tr>
@@ -349,6 +350,10 @@ export default function ExpensePage() {
               </td>
               <td className="border px-2 py-1 capitalize">{e.category}</td>
               <td className="border px-2 py-1">{e.description || "-"}</td>
+              <td className="border px-2 py-1">
+                {e.user?.name || "Sin asignar"}
+              </td>
+
               <td className="border px-2 py-1">${e.amount.toFixed(2)}</td>
               <td className="border px-2 py-1 space-x-2">
                 <Button size="sm" onClick={() => handleEdit(e)}>
@@ -367,7 +372,7 @@ export default function ExpensePage() {
         </tbody>
         <tfoot>
           <tr className="bg-gray-50 font-semibold text-lg">
-            <td colSpan={3} className="border px-2 py-1 text-right">
+            <td colSpan={4} className="border px-2 py-1 text-right">
               Total
             </td>
             <td className="border px-2 py-1">

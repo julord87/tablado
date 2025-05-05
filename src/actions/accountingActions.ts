@@ -3,6 +3,7 @@
 import { prisma } from "../../prisma/lib/prisma";
 import { IncomeType, PaymentMethod } from "@prisma/client";
 import { getExpenseTotals } from "./expensesActions";
+import { auth } from "../../auth";
 
 export async function getIncomesByMonth(month: number, year: number) {
   const start = new Date(year, month - 1, 1);
@@ -14,6 +15,9 @@ export async function getIncomesByMonth(month: number, year: number) {
         gte: start,
         lte: end,
       },
+    },
+    include: {
+      user: true,
     },
     orderBy: { date: "desc" },
   });
@@ -46,9 +50,11 @@ export async function createIncome(data: {
   description?: string | null;
   paymentMethod: PaymentMethod | null;
 }) {
+  const session = await auth();
+  const userId = session?.user?.id;
   const { amount, date, type, description, paymentMethod } = data;
   const sevilleTime = new Date(date); // Si ya lo calculás afuera, mantenelo así
-
+ 
   await prisma.income.create({
     data: {
       amount,
@@ -56,6 +62,7 @@ export async function createIncome(data: {
       type,
       description,
       paymentMethod,
+      userId: userId ? Number(userId) : null, // Asegúrate de que userId sea un número
     },
   });
 }
@@ -76,12 +83,13 @@ export async function updateIncome(
   });
 }
 
-export async function closeCashForDay(date: Date): Promise<number | null> {
+export async function closeCashForDay(date: Date, userId?: number): Promise<number | null> {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date(date);
   endOfDay.setHours(23, 59, 59, 999);
 
+  // Traer shows + reservas del día
   const shows = await prisma.show.findMany({
     where: {
       date: {
@@ -98,69 +106,77 @@ export async function closeCashForDay(date: Date): Promise<number | null> {
     },
   });
 
-  if (shows.length === 0) return null; // <-- No cerrar si no hay shows
+  if (shows.length === 0) return null;
 
-  const total = shows
-    .flatMap((show) =>
-      show.Reservation.flatMap((r) =>
-        r.items.map((i) => i.type.price * i.quantity)
-      )
-    )
-    .reduce((a, b) => a + b, 0);
+  const allItems = shows.flatMap((show) =>
+    show.Reservation.flatMap((res) => res.items)
+  );
 
-  const formattedDate = new Intl.DateTimeFormat("es-AR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(endOfDay);
+  const ticketsSold = allItems.reduce((sum, i) => sum + i.quantity, 0);
+  const ticketsSoldAmount = allItems.reduce(
+    (sum, i) => sum + i.type.price * i.quantity,
+    0
+  );
 
-  await prisma.income.create({
-    data: {
-      amount: total,
+  // Traer ingresos del día para detectar ingresos web (IncomeType = "tickets_web")
+  const incomes = await prisma.income.findMany({
+    where: {
+      date: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
       type: "tickets_web",
-      description: `Cierre de caja ventas web del ${formattedDate}`,
-      date: new Date(),
     },
   });
 
-  return total;
+  const totalTicketsWeb = incomes.reduce((sum, i) => sum + i.amount, 0);
+  const ticketsSoldWeb = incomes.length; // O también podés sumar entradas si se guarda esa info en otro lado
+
+  const closure = await prisma.cashClosure.create({
+    data: {
+      date: startOfDay,
+      total: totalTicketsWeb,
+      ticketsSoldAmount,
+      ticketsSold,
+      ticketsSoldWeb,
+      userId, // <-- lo agregás acá
+      shows: {
+        connect: shows.map((s) => ({ id: s.id })),
+      },
+      tickets: {
+        connect: allItems.map((item) => ({ id: item.id })),
+      },
+    },
+  });
+
+  return closure.total;
 }
 
 export async function isCashClosedForToday(): Promise<boolean> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const existingClosure = await prisma.income.findFirst({
+  const closure = await prisma.cashClosure.findFirst({
     where: {
-      type: "tickets_web",
-      date: {
-        gte: today,
-        lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
-      },
+      date: today,
     },
   });
 
-  return !!existingClosure;
+  return !!closure;
 }
 
 export async function deleteDayCashClosure(date: Date) {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(date);
-  endOfDay.setHours(23, 59, 59, 999);
 
-  const closure = await prisma.income.findFirst({
+  const closure = await prisma.cashClosure.findFirst({
     where: {
-      type: "tickets_web",
-      date: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
+      date: startOfDay,
     },
   });
 
   if (closure) {
-    await prisma.income.delete({
+    await prisma.cashClosure.delete({
       where: { id: closure.id },
     });
   }
