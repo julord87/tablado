@@ -18,6 +18,7 @@ import {
 } from "@/components";
 import { getExpenseTotalsByType } from "@/actions/expensesActions";
 import LastMovements from '../../../components/admin/LastAccountingsCards';
+import CashClosureCard from "@/components/admin/CashClosureCard";
 
 export default async function AccountingDashboardPage() {
   const hoy = new Date();
@@ -156,23 +157,7 @@ export default async function AccountingDashboardPage() {
       <LastMovements />
 
       {/* Cierre de caja */}
-      <Card className="bg-stone-50 lg:col-span-4">
-        <CardContent className="p-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-muted-foreground font-sans">
-                Cierre de caja de hoy
-              </p>
-              <p className="text-lg font-bold">Pendiente</p>
-            </div>
-            <form action="/api/cash-close" method="POST">
-              <Button className="font-sans" type="submit">
-                💵 Cerrar caja del día
-              </Button>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
+      <CashClosureCard />
     </div>
   );
 }
