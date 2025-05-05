@@ -89,7 +89,7 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
   const endOfDay = new Date(date);
   endOfDay.setHours(23, 59, 59, 999);
 
-  // Traer shows + reservas del día
+  // Shows del día (con reservas)
   const shows = await prisma.show.findMany({
     where: {
       date: {
@@ -106,8 +106,6 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
     },
   });
 
-  if (shows.length === 0) return null;
-
   const allItems = shows.flatMap((show) =>
     show.Reservation.flatMap((res) => res.items)
   );
@@ -118,7 +116,7 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
     0
   );
 
-  // Traer ingresos del día para detectar ingresos web (IncomeType = "tickets_web")
+  // Ingresos y egresos del día
   const incomes = await prisma.income.findMany({
     where: {
       date: {
@@ -129,17 +127,44 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
     },
   });
 
+  const expenses = await prisma.expense.findMany({
+    where: {
+      date: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    },
+  });
+
+  // Si no hubo shows, ingresos ni gastos: no se cierra la caja
+  if (shows.length === 0 && incomes.length === 0 && expenses.length === 0) {
+    return null;
+  }
+
+  // Sumar ingresos web si hay
   const totalTicketsWeb = incomes.reduce((sum, i) => sum + i.amount, 0);
-  const ticketsSoldWeb = incomes.length; // O también podés sumar entradas si se guarda esa info en otro lado
+  const ticketsSoldWeb = incomes.length;
+
+  // Crear ingreso automático si hubo ventas web pero no fueron registradas
+  if (ticketsSoldAmount > 0 && totalTicketsWeb === 0) {
+    await prisma.income.create({
+      data: {
+        date: new Date(), // ⏰ con hora actual
+        amount: ticketsSoldAmount,
+        type: "tickets_web",
+        description: "Ingreso automático por venta de entradas web",
+      },
+    });
+  }
 
   const closure = await prisma.cashClosure.create({
     data: {
       date: startOfDay,
-      total: totalTicketsWeb,
+      total: ticketsSoldAmount,
       ticketsSoldAmount,
       ticketsSold,
       ticketsSoldWeb,
-      userId, // <-- lo agregás acá
+      userId,
       shows: {
         connect: shows.map((s) => ({ id: s.id })),
       },

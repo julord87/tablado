@@ -8,7 +8,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div>
       <AdminHeader userName={session?.user?.name || "Invitado"} />
-      <ClientSessionProvider>
+      <ClientSessionProvider session={session}>
         <main>{children}</main>
       </ClientSessionProvider>
     </div>
