@@ -37,7 +37,7 @@ export default function ExpensePage() {
 
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState(expenseCategories[0].value);
+  const [category, setCategory] = useState("");
   const [date, setDate] = useState(format(today, "yyyy-MM-dd"));
 
   const [isEditing, setIsEditing] = useState(false);
@@ -146,7 +146,7 @@ export default function ExpensePage() {
 
   const resetForm = () => {
     setAmount("");
-    setCategory(expenseCategories[0].value);
+    setCategory("");
     setDescription("");
     setDate(format(today, "yyyy-MM-dd"));
     setEditingId(null);
@@ -179,15 +179,11 @@ export default function ExpensePage() {
         </div>
         <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total del mes</p>
-          <p className="text-xl font-bold">
-            ${totales.totalMes.toFixed(2)}
-          </p>
+          <p className="text-xl font-bold">${totales.totalMes.toFixed(2)}</p>
         </div>
         <div className="bg-purple-100 text-purple-800 p-4 rounded-xl shadow w-48">
           <p className="text-sm font-medium">Total año</p>
-          <p className="text-xl font-bold">
-            ${totales.totalAnual.toFixed(2)}
-          </p>
+          <p className="text-xl font-bold">${totales.totalAnual.toFixed(2)}</p>
         </div>
       </div>
 
@@ -302,6 +298,9 @@ export default function ExpensePage() {
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full border p-2 rounded"
                 >
+                  <option value="" disabled>
+                    --Selecciona una categoría--
+                  </option>
                   {expenseCategories.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}

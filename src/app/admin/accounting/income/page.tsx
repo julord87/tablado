@@ -169,7 +169,7 @@ export default function IncomePage() {
 
   const resetForm = () => {
     setAmount("");
-    setDate(format(today, "yyyy-MM-dd"));
+    setDate(selectedDay || format(today, "yyyy-MM-dd"));
     setEditingIncomeId(null);
     setIsEditing(false);
     setDescription("");
@@ -234,8 +234,8 @@ export default function IncomePage() {
                 const prev = new Date(selectedDay);
                 prev.setDate(prev.getDate() - 1);
                 setSelectedDay(format(prev, "yyyy-MM-dd"));
-                setMonth(parseInt(prev.toISOString().split("-")[1]));
-                setYear(parseInt(prev.toISOString().split("-")[0]));
+                setMonth(prev.getMonth() + 1); // getMonth() es 0-based
+                setYear(prev.getFullYear());
               } else {
                 updateMonthYearToPrev();
               }
@@ -250,8 +250,8 @@ export default function IncomePage() {
                 const next = new Date(selectedDay);
                 next.setDate(next.getDate() + 1);
                 setSelectedDay(format(next, "yyyy-MM-dd"));
-                setMonth(parseInt(next.toISOString().split("-")[1]));
-                setYear(parseInt(next.toISOString().split("-")[0]));
+                setMonth(next.getMonth() + 1);
+                setYear(next.getFullYear());
               } else {
                 updateMonthYearToNext();
               }
@@ -340,7 +340,7 @@ export default function IncomePage() {
                     className="w-full p-2 border rounded capitalize"
                   >
                     <option value="" disabled>
-                      Seleccioná un método de pago
+                      --Seleccioná un método de pago--
                     </option>
                     {Object.values(PaymentMethod).map((value) => (
                       <option key={value} value={value} className="capitalize">
@@ -356,7 +356,7 @@ export default function IncomePage() {
                     className="w-full p-2 border rounded capitalize"
                   >
                     <option value="" disabled>
-                      Seleccioná una categoría
+                      --Seleccioná una categoría--
                     </option>
                     {incomeTypesArray.map(({ value, label }) => (
                       <option key={value} value={value} className="capitalize">
