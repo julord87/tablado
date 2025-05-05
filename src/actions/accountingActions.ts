@@ -384,7 +384,6 @@ export async function getAverageDailyIncome() {
   return { average };
 }
 
-
 export async function getIncomeByPaymentMethod() {
   const result = await prisma.income.groupBy({
     by: ["paymentMethod"],
@@ -398,6 +397,7 @@ export async function getIncomeByPaymentMethod() {
     total: item._sum.amount ?? 0,
   }));
 }
+
 export async function deleteIncome(id: number) {
   await prisma.income.delete({
     where: { id },
