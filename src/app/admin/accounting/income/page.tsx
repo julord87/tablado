@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { getFormattedTitle, numberToMonth } from "../../../../../helpers";
 import { IncomeType, PaymentMethod } from "@prisma/client";
 import { CloseDayCashButton } from "@/components";
+import { incomeTypesArray } from "../../../../../utils/incomeTypes";
 
 export default function IncomePage() {
   const today = new Date();
@@ -33,14 +34,14 @@ export default function IncomePage() {
   const [year, setYear] = useState(today.getFullYear());
   const [totalAnual, setTotalAnual] = useState(0);
   const [incomes, setIncomes] = useState<any[]>([]);
-  const [type, setType] = useState<IncomeType>(IncomeType.barra);
+  const [type, setType] = useState<IncomeType | "">("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(format(today, "yyyy-MM-dd"));
   const [refresh, setRefresh] = useState(false);
   const [allMonthIncomes, setAllMonthIncomes] = useState<any[]>([]);
   const [isCashClosed, setIsCashClosed] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | "">("");
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -120,7 +121,10 @@ export default function IncomePage() {
   }, [selectedDay, refresh]);
 
   const handleSubmit = async () => {
-    if (!amount || !description || !date) return alert("Faltan datos");
+    if (!amount || !description || !date || !type || !paymentMethod) {
+      toast.error("⚠️ Por favor completa todos los campos.");
+      return;
+    }
 
     const localDate = new Date(date);
     localDate.setHours(0, 0, 0, 0); // fuerza a las 00:00 local
@@ -330,9 +334,14 @@ export default function IncomePage() {
                   <Label>Método de pago</Label>
                   <select
                     value={paymentMethod ?? ""}
-                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                    onChange={(e) =>
+                      setPaymentMethod(e.target.value as PaymentMethod)
+                    }
                     className="w-full p-2 border rounded capitalize"
                   >
+                    <option value="" disabled>
+                      Seleccioná un método de pago
+                    </option>
                     {Object.values(PaymentMethod).map((value) => (
                       <option key={value} value={value} className="capitalize">
                         {value}
@@ -346,9 +355,12 @@ export default function IncomePage() {
                     onChange={(e) => setType(e.target.value as IncomeType)}
                     className="w-full p-2 border rounded capitalize"
                   >
-                    {Object.values(IncomeType).map((value) => (
+                    <option value="" disabled>
+                      Seleccioná una categoría
+                    </option>
+                    {incomeTypesArray.map(({ value, label }) => (
                       <option key={value} value={value} className="capitalize">
-                        {value}
+                        {label}
                       </option>
                     ))}
                   </select>

@@ -1,5 +1,5 @@
 // utils/incomeTypes.ts
-export const incomeTypes = [
+export const incomeTypesArray = [
     { value: "tickets", label: "Tickets" },
     { value: "tickets_web", label: "Tickets Web" },
     { value: "barra", label: "Barra" },
