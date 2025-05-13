@@ -412,7 +412,7 @@ export default function IncomePage() {
               <td className="border px-2 py-1">
                 {format(new Date(income.date), "dd/MM/yyyy" + " HH:mm:ss")}
               </td>
-              <td className="border px-2 py-1 capitalize">{income.type}</td>
+              <td className="border px-2 py-1 capitalize">{(income.type).replace("_", " ")}</td>
               <td className="border px-2 py-1">
                 {income.description || "Sin descripción"}
               </td>

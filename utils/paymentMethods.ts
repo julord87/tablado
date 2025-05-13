@@ -1,4 +1,4 @@
-const PaymentMethod = ["efectivo", "tarjeta", "bizum", "transferencia", "otro"];
+const PaymentMethod = ["efectivo", "tarjeta", "bizum", "transferencia", "otro", "varios"];
 
 export const paymentMethods = PaymentMethod.map((method) => ({
   value: method,

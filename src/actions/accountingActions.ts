@@ -155,6 +155,7 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
         amount: ticketsSoldAmount,
         type: "tickets_web",
         description: "Ingreso por venta de entradas web",
+        paymentMethod: "varios",
         userId: userId ? Number(userId) : null, // Asegúrate de que userId sea un número
       },
     });
