@@ -53,12 +53,11 @@ export async function createIncome(data: {
   const session = await auth();
   const userId = session?.user?.id;
   const { amount, date, type, description, paymentMethod } = data;
-  const sevilleTime = new Date(date); // Si ya lo calculás afuera, mantenelo así
  
   await prisma.income.create({
     data: {
       amount,
-      date: sevilleTime,
+      date: new Date(),
       type,
       description,
       paymentMethod,
@@ -79,7 +78,10 @@ export async function updateIncome(
 ) {
   await prisma.income.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      date: new Date(), // Asegúrate de que la fecha sea un objeto Date
+    },  
   });
 }
 
@@ -152,7 +154,8 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
         date: new Date(), // ⏰ con hora actual
         amount: ticketsSoldAmount,
         type: "tickets_web",
-        description: "Ingreso automático por venta de entradas web",
+        description: "Ingreso por venta de entradas web",
+        userId: userId ? Number(userId) : null, // Asegúrate de que userId sea un número
       },
     });
   }

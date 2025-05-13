@@ -102,7 +102,7 @@ export default async function ShowReservationsPage({
 
       <Link
         href="/admin/shows"
-        className="mt-4 inline-block text-blue-600 hover:underline"
+        className="mt-4 inline-block text-blue-600 hover:underline font-sans"
       >
         ← Volver a shows
       </Link>

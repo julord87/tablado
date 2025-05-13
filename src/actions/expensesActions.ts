@@ -43,7 +43,7 @@ export async function createExpense(data: {
       amount: data.amount,
       category: data.category as ExpenseCategory,
       description: data.description,
-      date: new Date(data.date),
+      date: new Date(),
       userId: userId
     },
   });
@@ -71,7 +71,7 @@ export async function updateExpense(
       amount: data.amount,
       category: data.category as ExpenseCategory,
       description: data.description,
-      date: new Date(data.date),
+      date: new Date(),
       userId: userId, 
     },
   });
