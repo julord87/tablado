@@ -44,6 +44,17 @@ export async function getHistoricShows() {
     orderBy: {
       date: "asc",
     },
+    include: {
+      Reservation: {
+        select: {
+          items: {
+            select: {
+              quantity: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 

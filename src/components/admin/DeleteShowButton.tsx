@@ -1,22 +1,25 @@
-// src/components/admin/DeleteShowButton.tsx
-
 "use client";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteShow } from "@/actions/showActions";
 
-export function DeleteShowButton({ id }: { id: number }) {
+export function DeleteShowButton({
+  id,
+  onDelete,
+}: {
+  id: number;
+  onDelete?: () => void;
+}) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!confirm("¿Seguro que querés eliminar este show?")) {
-      return;
-    }
+    if (!confirm("¿Seguro que querés eliminar este show?")) return;
 
     await deleteShow(id);
     toast.success("✅ Show eliminado");
-    router.refresh(); // refresca la lista sin reload completo
+
+    onDelete?.(); // ejecuta la función que le pasaste
   };
 
   return (
