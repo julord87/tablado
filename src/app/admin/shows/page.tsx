@@ -1,38 +1,63 @@
-// src/app/admin/shows/page.tsx
+"use client";
 
+import { useEffect, useState } from "react";
 import { getShows } from "@/actions/showActions";
-import Link from "next/link";
-import { DeleteShowButton } from "@/components/admin/DeleteShowButton";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import ShowFormModal from "@/components/admin/ShowFormModal";
 
-export default async function AdminShowsPage() {
-  const shows = await getShows();
+export default function AdminShowsPage() {
+  const [shows, setShows] = useState<any[]>([]);
+  const [selectedShow, setSelectedShow] = useState<any | null>(null);
+  const [mode, setMode] = useState<"create" | "edit">("create");
+  const [open, setOpen] = useState(false);
 
-  const showsWithTicketsSold = shows.map((show) => {
-    const ticketsSold = (show.Reservation ?? []).reduce(
-      (total, res) =>
-        total + res.items.reduce((sum, item) => sum + item.quantity, 0),
-      0
-    );
+  const fetchShows = async () => {
+    const data = await getShows();
+    const withTicketsSold = data.map((show) => {
+      const ticketsSold = (show.Reservation ?? []).reduce(
+        (total, res) =>
+          total + res.items.reduce((sum, item) => sum + item.quantity, 0),
+        0
+      );
+      return { ...show, ticketsSold };
+    });
+    setShows(withTicketsSold);
+  };
 
-    return { ...show, ticketsSold };
-  });
+  useEffect(() => {
+    fetchShows();
+  }, []);
+
+  const handleOpenCreate = () => {
+    setMode("create");
+    setSelectedShow(null);
+    setOpen(true);
+  };
+
+  const handleOpenEdit = (show: any) => {
+    setMode("edit");
+    setSelectedShow(show);
+    setOpen(true);
+  };
+
+  const handleSuccess = () => {
+    setOpen(false);
+    fetchShows();
+    toast.success(mode === "create" ? "Show creado!" : "Show actualizado!");
+  };
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Shows</h1>
-        <Link
-          href="/admin/shows/new"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-sans"
-        >
-          Crear Show
-        </Link>
+        <Button onClick={handleOpenCreate} className="font-sans">Crear Show</Button>
       </div>
 
       {shows.length === 0 ? (
         <p>No hay shows programados.</p>
       ) : (
-        <table className="w-full border">
+        <table className="w-full border font-sans">
           <thead>
             <tr className="bg-gray-100 text-lg">
               <th className="p-2 border">Fecha</th>
@@ -43,33 +68,31 @@ export default async function AdminShowsPage() {
             </tr>
           </thead>
           <tbody>
-            {showsWithTicketsSold.map((show) => (
-              <tr key={show.id} className="text-center font-sans">
-                <td className="border p-2">
-                  {new Date(show.date).toLocaleDateString()}
-                </td>
+            {shows.map((show) => (
+              <tr key={show.id} className="text-center">
+                <td className="border p-2">{new Date(show.date).toLocaleDateString("es-ES")}</td>
                 <td className="border p-2">{show.time}</td>
                 <td className="border p-2">{show.capacity}</td>
                 <td className="border p-2">{show.ticketsSold}</td>
                 <td className="border p-2 space-x-2">
-                  <Link href={`/admin/shows/${show.id}`}>
-                    <button className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                      Detalle
-                    </button>
-                  </Link>
-                  <Link
-                    href={`/admin/shows/${show.id}/edit`}
-                    className="bg-rose-400 text-white px-2 py-1 rounded hover:bg-rose-500 text-sm"
-                  >
+                  <Button variant="secondary" onClick={() => handleOpenEdit(show)}>
                     Editar
-                  </Link>
-                  <DeleteShowButton id={show.id} />
+                  </Button>
+                  {/* Acá podés dejar el DeleteShowButton como está */}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+
+      <ShowFormModal
+        open={open}
+        onOpenChange={setOpen}
+        mode={mode}
+        show={selectedShow}
+        onSuccess={handleSuccess}
+      />
     </div>
   );
 }
