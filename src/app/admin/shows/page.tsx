@@ -62,6 +62,7 @@ export default function AdminShowsPage() {
           </Button>
           <Button
             variant="outline"
+            className="font-sans"
             onClick={() => {
               setShowHistoric((prev) => !prev);
             }}
