@@ -51,9 +51,9 @@ export default function AdminShowsPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="m-8 space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-4xl font-bold">
           {showHistoric ? "Historial de Shows" : "Próximos Shows"}
         </h1>
         <div className="flex gap-2">

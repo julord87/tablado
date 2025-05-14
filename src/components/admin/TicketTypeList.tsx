@@ -6,7 +6,7 @@ export default async function TicketTypeList() {
   const ticketTypes = await getTicketTypes();
 
   return (
-    <div className="p-4">
+    <div className="m-8 space-y-6">
       <div className="flex justify-between items-center mb-6">
         <Link
           href="/admin/tickets/new"

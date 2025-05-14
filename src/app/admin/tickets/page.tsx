@@ -11,8 +11,8 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Tipos de tickets</h1>
+    <div className="m-8 space-y-6">
+      <h1 className="text-4xl font-bold mb-4">Tipos de tickets</h1>
       
       {/* Tipos de tickets */}
       <TicketTypeList />

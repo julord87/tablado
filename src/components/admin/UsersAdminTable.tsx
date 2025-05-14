@@ -30,8 +30,8 @@ export default function AdminUsersClient({ users }: { users: any[] }) {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Administración de Usuarios</h1>
+    <div className="m-8 max-w-2xl mx-auto">
+      <h1 className="text-4xl font-bold mb-4">Administración de Usuarios</h1>
 
       <form onSubmit={handleSubmit} className="mb-6 flex gap-2">
         <input
@@ -64,7 +64,7 @@ export default function AdminUsersClient({ users }: { users: any[] }) {
       </form>
 
       <table className="w-full text-sm border">
-        <thead className="bg-gray-100 text-lg">
+        <thead className="bg-gray-100 text-2xl">
           <tr>
             <th className="border px-2 py-1">ID</th>
             <th className="border px-2 py-1">Nombre</th>

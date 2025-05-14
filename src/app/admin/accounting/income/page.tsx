@@ -176,7 +176,7 @@ export default function IncomePage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="m-8 space-y-6">
       <h2 className="text-2xl font-semibold mb-6">
         {getFormattedTitle(
           selectedDay ? new Date(selectedDay) : null,
