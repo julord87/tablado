@@ -63,7 +63,7 @@ export default function ShowFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === "create" ? "Crear Show" : "Editar Show"}</DialogTitle>
+          <DialogTitle className="text-2xl">{mode === "create" ? "Crear Show" : "Editar Show"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
@@ -87,7 +87,7 @@ export default function ShowFormModal({
             />
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full font-sans">
             {mode === "create" ? "Crear Show" : "Guardar Cambios"}
           </Button>
         </form>

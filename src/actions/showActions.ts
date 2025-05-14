@@ -98,7 +98,6 @@ export async function getShowById(id: number) {
   });
 }
 
-
 export async function createShow({ date, time, capacity }: ShowInput) {
   if (!date || !time || !capacity) {
     throw new Error("Todos los campos son obligatorios");
@@ -115,7 +114,12 @@ export async function createShow({ date, time, capacity }: ShowInput) {
   revalidatePath("/admin/shows");
 }
 
-export async function updateShow({ id, date, time, capacity }: UpdateShowInput) {
+export async function updateShow({
+  id,
+  date,
+  time,
+  capacity,
+}: UpdateShowInput) {
   if (!date || !time || !capacity) {
     throw new Error("Todos los campos son obligatorios");
   }
@@ -138,5 +142,36 @@ export async function deleteShow(id: number) {
   });
 
   revalidatePath("/admin/shows");
+}
+
+export async function getShowsWithReservationsByDate(date: Date) {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(date);
+  end.setHours(23, 59, 59, 999);
+
+  return await prisma.show.findMany({
+    where: {
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+    orderBy: {
+      time: "asc",
+    },
+    include: {
+      Reservation: {
+        include: {
+          items: {
+            include: {
+              type: true,
+            },
+          },
+        },
+      },
+    },
+  });
 }
 
