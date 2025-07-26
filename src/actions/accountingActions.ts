@@ -174,6 +174,8 @@ export async function closeCashForDay(
     data: {
       date: startOfDay,
       total: totalIncomeToday - totalExpensesToday,
+      totalIncomes: totalIncomeToday,      // 🔥 NUEVO
+      totalExpenses: totalExpensesToday,   // 🔥 NUEVO
       ticketsSoldAmount,
       ticketsSold,
       ticketsSoldWeb,
