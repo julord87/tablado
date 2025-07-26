@@ -128,13 +128,15 @@ model CashClosure {
   id                Int      @id @default(autoincrement())
   date              DateTime @unique
   total             Float
+  totalIncomes      Float?     // <--- nuevo
+  totalExpenses     Float?     // <--- nuevo
   ticketsSoldAmount Float
   ticketsSoldWeb    Int
   ticketsSold       Int
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  userId Int? // <-- nuevo
+  userId Int?
   user   User? @relation(fields: [userId], references: [id])
 
   incomes  Income[]          @relation("CashClosureIncomes")
@@ -142,4 +144,5 @@ model CashClosure {
   shows    Show[]            @relation("CashClosureShows")
   tickets  ReservationItem[] @relation("CashClosureTickets")
 }
+
 
