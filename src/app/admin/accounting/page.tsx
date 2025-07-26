@@ -17,7 +17,7 @@ import {
   TicketTypeIncomePieChart,
 } from "@/components";
 import { getExpenseTotalsByType } from "@/actions/expensesActions";
-import LastMovements from '../../../components/admin/LastAccountingsCards';
+import LastMovements from "../../../components/admin/LastAccountingsCards";
 import CashClosureCard from "@/components/admin/CashClosureCard";
 
 export default async function AccountingDashboardPage() {
@@ -51,6 +51,14 @@ export default async function AccountingDashboardPage() {
             variant="outline"
           >
             💵 Administrar Gastos
+          </Button>
+        </Link>
+        <Link href="/admin/accounting/closures">
+          <Button
+            className="flex gap-2 bg-stone-50 px-4 py-2 rounded hover:bg-stone-100"
+            variant="outline"
+          >
+            🧾 Historico Cierres
           </Button>
         </Link>
       </div>
