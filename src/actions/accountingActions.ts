@@ -162,7 +162,7 @@ export async function closeCashForDay(
         date: new Date(),
         amount: ticketsSoldAmount,
         type: "tickets_web",
-        description: "Ingreso por venta de entradas web",
+        description: "Ingreso de tickets web",
         paymentMethod: "varios",
         userId: userId ?? null,
       },
@@ -174,8 +174,8 @@ export async function closeCashForDay(
     data: {
       date: startOfDay,
       total: totalIncomeToday - totalExpensesToday,
-      totalIncomes: totalIncomeToday,      // 🔥 NUEVO
-      totalExpenses: totalExpensesToday,   // 🔥 NUEVO
+      totalIncomes: totalIncomeToday, // 🔥 NUEVO
+      totalExpenses: totalExpensesToday, // 🔥 NUEVO
       ticketsSoldAmount,
       ticketsSold,
       ticketsSoldWeb,
@@ -185,6 +185,12 @@ export async function closeCashForDay(
       },
       tickets: {
         connect: allItems.map((item) => ({ id: item.id })),
+      },
+      incomes: {
+        connect: allIncomes.map((i) => ({ id: i.id })),
+      },
+      expenses: {
+        connect: expenses.map((e) => ({ id: e.id })),
       },
     },
   });
@@ -203,6 +209,32 @@ export async function isCashClosedForToday(): Promise<boolean> {
   });
 
   return !!closure;
+}
+
+export async function getCashClosuresByMonth(month: number, year: number) {
+  const start = new Date(year, month - 1, 1);
+  const end = new Date(year, month, 0, 23, 59, 59);
+
+  return await prisma.cashClosure.findMany({
+    where: {
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+    orderBy: {
+      date: "desc",
+    },
+    include: {
+      user: true,
+      incomes: true, // si querés detalles adicionales
+      expenses: true,
+      tickets: {
+        include: { type: true },
+      },
+      shows: true,
+    },
+  });
 }
 
 export async function deleteDayCashClosure(date: Date) {
