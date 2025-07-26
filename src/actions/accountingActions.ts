@@ -53,7 +53,7 @@ export async function createIncome(data: {
   const session = await auth();
   const userId = session?.user?.id;
   const { amount, date, type, description, paymentMethod } = data;
- 
+
   await prisma.income.create({
     data: {
       amount,
@@ -81,11 +81,14 @@ export async function updateIncome(
     data: {
       ...data,
       date: new Date(), // Asegúrate de que la fecha sea un objeto Date
-    },  
+    },
   });
 }
 
-export async function closeCashForDay(date: Date, userId?: number): Promise<number | null> {
+export async function closeCashForDay(
+  date: Date,
+  userId?: number
+): Promise<number | null> {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date(date);
@@ -161,10 +164,13 @@ export async function closeCashForDay(date: Date, userId?: number): Promise<numb
     });
   }
 
+  const totalIncomeToday = ticketsSoldAmount + totalTicketsWeb;
+  const totalExpensesToday = expenses.reduce((sum, e) => sum + e.amount, 0);
+
   const closure = await prisma.cashClosure.create({
     data: {
       date: startOfDay,
-      total: ticketsSoldAmount,
+      total: totalIncomeToday - totalExpensesToday, // balance real
       ticketsSoldAmount,
       ticketsSold,
       ticketsSoldWeb,
@@ -410,21 +416,24 @@ export async function getLastIncomes(limit = 5) {
 export async function getAverageDailyIncome() {
   const from = new Date();
   from.setDate(from.getDate() - 30);
+  from.setHours(0, 0, 0, 0);
 
-  const daily = await prisma.income.groupBy({
-    by: ["date"],
+  const incomes = await prisma.income.findMany({
     where: {
-      date: {
-        gte: from,
-      },
-    },
-    _sum: {
-      amount: true,
+      date: { gte: from },
     },
   });
 
-  const total = daily.reduce((acc, d) => acc + (d._sum.amount || 0), 0);
-  const average = daily.length > 0 ? total / daily.length : 0;
+  const map = new Map<string, number>();
+
+  for (const i of incomes) {
+    const key = i.date.toISOString().split("T")[0]; // YYYY-MM-DD
+    const existing = map.get(key) || 0;
+    map.set(key, existing + i.amount);
+  }
+
+  const total = Array.from(map.values()).reduce((sum, val) => sum + val, 0);
+  const average = map.size > 0 ? total / map.size : 0;
 
   return { average };
 }
