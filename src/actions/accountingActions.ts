@@ -121,17 +121,24 @@ export async function closeCashForDay(
     0
   );
 
-  // Ingresos y egresos del día
-  const incomes = await prisma.income.findMany({
+  // Todos los ingresos del día
+  const allIncomes = await prisma.income.findMany({
     where: {
       date: {
         gte: startOfDay,
         lte: endOfDay,
       },
-      type: "tickets_web",
     },
   });
 
+  const totalIncomeToday = allIncomes.reduce((sum, i) => sum + i.amount, 0);
+
+  // Ingresos solo web
+  const incomesWeb = allIncomes.filter((i) => i.type === "tickets_web");
+  const totalTicketsWeb = incomesWeb.reduce((sum, i) => sum + i.amount, 0);
+  const ticketsSoldWeb = incomesWeb.length;
+
+  // Egresos del día
   const expenses = await prisma.expense.findMany({
     where: {
       date: {
@@ -141,36 +148,32 @@ export async function closeCashForDay(
     },
   });
 
-  // Si no hubo shows, ingresos ni gastos: no se cierra la caja
-  if (shows.length === 0 && incomes.length === 0 && expenses.length === 0) {
+  const totalExpensesToday = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+  // Si no hubo nada: no se cierra la caja
+  if (shows.length === 0 && allIncomes.length === 0 && expenses.length === 0) {
     return null;
   }
 
-  // Sumar ingresos web si hay
-  const totalTicketsWeb = incomes.reduce((sum, i) => sum + i.amount, 0);
-  const ticketsSoldWeb = incomes.length;
-
-  // Crear ingreso automático si hubo ventas web pero no fueron registradas
+  // Crear ingreso automático si hubo ventas pero no hay registro web
   if (ticketsSoldAmount > 0 && totalTicketsWeb === 0) {
     await prisma.income.create({
       data: {
-        date: new Date(), // ⏰ con hora actual
+        date: new Date(),
         amount: ticketsSoldAmount,
         type: "tickets_web",
         description: "Ingreso por venta de entradas web",
         paymentMethod: "varios",
-        userId: userId ? Number(userId) : null, // Asegúrate de que userId sea un número
+        userId: userId ?? null,
       },
     });
   }
 
-  const totalIncomeToday = ticketsSoldAmount + totalTicketsWeb;
-  const totalExpensesToday = expenses.reduce((sum, e) => sum + e.amount, 0);
-
+  // Cierre de caja
   const closure = await prisma.cashClosure.create({
     data: {
       date: startOfDay,
-      total: totalIncomeToday - totalExpensesToday, // balance real
+      total: totalIncomeToday - totalExpensesToday,
       ticketsSoldAmount,
       ticketsSold,
       ticketsSoldWeb,
@@ -434,7 +437,6 @@ export async function getAverageDailyIncome() {
 
   const total = Array.from(map.values()).reduce((sum, val) => sum + val, 0);
   const average = map.size > 0 ? total / map.size : 0;
-
   return { average };
 }
 

@@ -31,25 +31,29 @@ export default function LastMovements() {
   const [incomes, setIncomes] = useState<IncomeItem[]>([]);
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [incomeByMethod, setIncomeByMethod] = useState<{ method: string; total: number }[]>([]);
-const [avgIncome, setAvgIncome] = useState<number>(0);
+  const [incomeByMethod, setIncomeByMethod] = useState<
+    { method: string; total: number }[]
+  >([]);
+  const [avgIncome, setAvgIncome] = useState<number>(0);
 
-useEffect(() => {
-  (async () => {
-    const [i, e, byMethod, avg] = await Promise.all([
-      getLastIncomes(),
-      getLastExpenses(),
-      getIncomeByPaymentMethod(),
-      getAverageDailyIncome(),
-    ]);
+  useEffect(() => {
+    (async () => {
+      const [i, e, byMethod, avg] = await Promise.all([
+        getLastIncomes(),
+        getLastExpenses(),
+        getIncomeByPaymentMethod(),
+        getAverageDailyIncome(),
+      ]);
 
-    setIncomes(i.map((income) => ({ ...income, id: income.id.toString() })));
-    setExpenses(e.map((expense) => ({ ...expense, id: expense.id.toString() })));
-    setIncomeByMethod(byMethod);
-    setAvgIncome(avg.average);
-    setLoading(false);
-  })();
-}, []);
+      setIncomes(i.map((income) => ({ ...income, id: income.id.toString() })));
+      setExpenses(
+        e.map((expense) => ({ ...expense, id: expense.id.toString() }))
+      );
+      setIncomeByMethod(byMethod);
+      setAvgIncome(avg.average);
+      setLoading(false);
+    })();
+  }, []);
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -149,7 +153,9 @@ useEffect(() => {
           <p className="font-semibold">Promedio diario de ingresos</p>
         </CardHeader>
         <CardContent className="ml-0 space-y-2 font-sans text-stone-700">
-          <p className="text-2xl lg:text-6xl font-semibold">€ {avgIncome.toFixed(2)}</p>
+          <p className="text-2xl lg:text-6xl font-semibold">
+            € {avgIncome.toFixed(2)}
+          </p>
           <p className="text-sm text-muted-foreground">
             Calculado en base a los últimos 30 días
           </p>

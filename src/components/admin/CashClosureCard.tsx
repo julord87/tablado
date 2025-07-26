@@ -4,12 +4,26 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CloseDayCashButton } from "./CashClosing";
 
 export default function CashClosureCard() {
-  const [isCashClosed, setIsCashClosed] = useState(false);
-
-  // Opcional: podrías traer el estado real desde la DB con una action acá
-  // useEffect(() => { ... }, []);
+  const [isCashClosed, setIsCashClosed] = useState<boolean | null>(null);
 
   const today = new Date();
+
+  useEffect(() => {
+    const checkCashStatus = async () => {
+      try {
+        const res = await fetch("/api/is-cash-closed");
+        const data = await res.json();
+        setIsCashClosed(data.closed);
+      } catch (err) {
+        console.error("Error al consultar estado de caja:", err);
+      }
+    };
+
+    checkCashStatus();
+  }, []);
+
+  // Evita render hasta saber si está cerrada
+  if (isCashClosed === null) return null;
 
   return (
     <Card className="bg-stone-50 lg:col-span-4 font-sans">

@@ -40,7 +40,7 @@ export default function ShowFormModal({
     } else {
       setDate("");
       setTime("18:00");
-      setCapacity(40);
+      setCapacity(30);
     }
   }, [show, mode, open]);
 
