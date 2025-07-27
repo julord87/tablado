@@ -11,6 +11,7 @@ import {
 import { getLastExpenses } from "@/actions/expensesActions";
 import { getShows } from "@/actions/showActions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CashClosureCard from "@/components/admin/CashClosureCard";
 
 export default function AdminDashboardPage() {
   const [resumen, setResumen] = useState<any>(null);
@@ -46,6 +47,28 @@ export default function AdminDashboardPage() {
     <div className="space-y-8 m-8">
       <h1 className="text-4xl font-bold">Panel de Administración</h1>
 
+      {/* Accesos rápidos */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-2">Accesos Rápidos</h2>
+        <div className="flex flex-wrap gap-2 font-sans">
+          <Link href="/admin/accounting/income">
+            <Button variant="outline">➕ Ingresos</Button>
+          </Link>
+          <Link href="/admin/accounting/expense">
+            <Button variant="outline">➖ Egresos</Button>
+          </Link>
+          <Link href="/admin/shows">
+            <Button variant="outline">🎭 Shows</Button>
+          </Link>
+          <Link href="/admin/reservations">
+            <Button variant="outline">📑 Reservas</Button>
+          </Link>
+          <Link href="/admin/accounting/closures">
+            <Button variant="outline">🧾 Cierres</Button>
+          </Link>
+        </div>
+      </div>
+
       {/* Resumen Diario */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="bg-green-100 text-green-800">
@@ -80,12 +103,8 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      {/* Alertas */}
-      {!cashClosed && (
-        <div className="bg-red-100 text-red-800 font-sans p-4 rounded shadow">
-          ⚠️ Aún no se ha cerrado la caja de hoy.
-        </div>
-      )}
+      {/* Btn de cierre de caja */}
+      <CashClosureCard />
 
       {/* Proximos Shows */}
       <div>
@@ -121,7 +140,7 @@ export default function AdminDashboardPage() {
 
       {/* Últimos Movimientos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
-        <Card>
+        <Card className="bg-stone-50">
           <Link href="/admin/accounting/income">
             <CardHeader>
               <CardTitle>Últimos Ingresos</CardTitle>
@@ -146,7 +165,7 @@ export default function AdminDashboardPage() {
           </Link>
         </Card>
 
-        <Card>
+        <Card className="bg-stone-50">
           <Link href="/admin/accounting/expense">
             <CardHeader>
               <CardTitle>Últimos Egresos</CardTitle>
@@ -170,28 +189,6 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Link>
         </Card>
-      </div>
-
-      {/* Accesos rápidos */}
-      <div>
-        <h2 className="text-2xl font-semibold mb-2">Accesos Rápidos</h2>
-        <div className="flex flex-wrap gap-2 font-sans">
-          <Link href="/admin/accounting/income">
-            <Button variant="outline">➕ Ingresos</Button>
-          </Link>
-          <Link href="/admin/accounting/expense">
-            <Button variant="outline">➖ Egresos</Button>
-          </Link>
-          <Link href="/admin/shows">
-            <Button variant="outline">🎭 Shows</Button>
-          </Link>
-          <Link href="/admin/reservations">
-            <Button variant="outline">📑 Reservas</Button>
-          </Link>
-          <Link href="/admin/accounting/closures">
-            <Button variant="outline">🧾 Cierres</Button>
-          </Link>
-        </div>
       </div>
     </div>
   );
