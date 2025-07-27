@@ -92,11 +92,11 @@ export default function ShowFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">
+          <DialogTitle className="text-3xl">
             {mode === "create" ? "Crear Show" : "Editar Show"}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <div>
             <Label>Título</Label>
             <Input
@@ -109,11 +109,17 @@ export default function ShowFormModal({
 
           <div>
             <Label>Descripción (opcional)</Label>
-            <Input
-              type="text"
+            <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              maxLength={200} // o 100 si querés algo más breve
+              rows={4}
+              className="w-full border rounded p-2 font-sans text-sm"
+              placeholder="Escribe una breve descripción del show..."
             />
+            <p className="text-sm text-muted-foreground text-right">
+              {description.length}/200 caracteres
+            </p>
           </div>
 
           <div>
@@ -121,7 +127,7 @@ export default function ShowFormModal({
             <select
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full border p-2 rounded font-sans text-sm"
             >
               <option value="">-- Selecciona un género --</option>
               {genreOptions.map((opt) => (
