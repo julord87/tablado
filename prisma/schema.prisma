@@ -11,6 +11,9 @@ model Show {
   id            Int           @id @default(autoincrement())
   date          DateTime
   time          String // Podés usar enum si tenés horarios fijos
+  title         String  @default("") // Nuevo: título visible del show
+  description   String? // Nuevo: descripción opcional
+  genre         Genre? // Nuevo: género (enum)
   capacity      Int // Capacidad total para ese horario
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -19,6 +22,16 @@ model Show {
   cashClosure   CashClosure?  @relation("CashClosureShows", fields: [cashClosureId], references: [id])
 
   @@unique([date, time])
+}
+
+enum Genre {
+  FLAMENCO
+  TANGO
+  MILONGA
+  POP
+  CANTAUTOR
+  FOLCLORE
+  OTRO
 }
 
 model TicketType {
@@ -128,8 +141,8 @@ model CashClosure {
   id                Int      @id @default(autoincrement())
   date              DateTime @unique
   total             Float
-  totalIncomes      Float?     // <--- nuevo
-  totalExpenses     Float?     // <--- nuevo
+  totalIncomes      Float? // <--- nuevo
+  totalExpenses     Float? // <--- nuevo
   ticketsSoldAmount Float
   ticketsSoldWeb    Int
   ticketsSold       Int
@@ -144,5 +157,3 @@ model CashClosure {
   shows    Show[]            @relation("CashClosureShows")
   tickets  ReservationItem[] @relation("CashClosureTickets")
 }
-
-

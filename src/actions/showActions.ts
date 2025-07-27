@@ -3,17 +3,24 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { Genre } from "../../utils/types";
 
 interface ShowInput {
   date: string;
   time: string;
   capacity: number;
+  title: string;
+  description?: string;
+  genre?: Genre;
 }
 
 interface UpdateShowInput {
   id: number;
   date: string;
   time: string;
+  title?: string;
+  description?: string;
+  genre?: Genre;
   capacity: number;
 }
 
@@ -33,12 +40,12 @@ export type ShowWithReservations = Prisma.ShowGetPayload<{
 
 export async function getHistoricShows() {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Ponemos la hora a 00:00 para comparar solo por fecha
+  today.setHours(0, 0, 0, 0);
 
   return await prisma.show.findMany({
     where: {
       date: {
-        lt: today, // "less than" = shows pasados
+        lt: today,
       },
     },
     orderBy: {
@@ -91,14 +98,14 @@ export async function getShowById(id: number) {
     include: {
       _count: {
         select: {
-          Reservation: true, // cuenta las reservas, que es lo que querés
+          Reservation: true,
         },
       },
     },
   });
 }
 
-export async function createShow({ date, time, capacity }: ShowInput) {
+export async function createShow({ date, time, title, description, genre, capacity }: ShowInput) {
   if (!date || !time || !capacity) {
     throw new Error("Todos los campos son obligatorios");
   }
@@ -106,20 +113,18 @@ export async function createShow({ date, time, capacity }: ShowInput) {
   await prisma.show.create({
     data: {
       date: new Date(date),
-      time: time,
-      capacity: capacity, // <- así directo
+      time,
+      title: title ?? "",
+      description,
+      genre,
+      capacity,
     },
   });
 
   revalidatePath("/admin/shows");
 }
 
-export async function updateShow({
-  id,
-  date,
-  time,
-  capacity,
-}: UpdateShowInput) {
+export async function updateShow({ id, date, time, title, description, genre, capacity }: UpdateShowInput) {
   if (!date || !time || !capacity) {
     throw new Error("Todos los campos son obligatorios");
   }
@@ -128,7 +133,10 @@ export async function updateShow({
     where: { id },
     data: {
       date: new Date(date),
-      time: time,
+      time,
+      title: title ?? "",
+      description,
+      genre,
       capacity: parseInt(String(capacity)),
     },
   });
@@ -174,4 +182,3 @@ export async function getShowsWithReservationsByDate(date: Date) {
     },
   });
 }
-

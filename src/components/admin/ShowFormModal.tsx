@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createShow, updateShow } from "@/actions/showActions";
+import { Genre } from "../../../utils/types";
 
 interface ShowFormModalProps {
   open: boolean;
@@ -20,6 +21,16 @@ interface ShowFormModalProps {
   show: any | null;
   onSuccess: () => void;
 }
+
+const genreOptions = [
+  "FLAMENCO",
+  "TANGO",
+  "MILONGA",
+  "POP",
+  "CANTAUTOR",
+  "FOLCLORE",
+  "OTRO",
+];
 
 export default function ShowFormModal({
   open,
@@ -31,27 +42,45 @@ export default function ShowFormModal({
   const [date, setDate] = useState("");
   const [time, setTime] = useState("18:00");
   const [capacity, setCapacity] = useState(40);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [genre, setGenre] = useState("");
 
   useEffect(() => {
     if (show && mode === "edit") {
       setDate(new Date(show.date).toISOString().split("T")[0]);
       setTime(show.time);
       setCapacity(show.capacity);
+      setTitle(show.title || "");
+      setDescription(show.description || "");
+      setGenre(show.genre || "");
     } else {
       setDate("");
       setTime("18:00");
       setCapacity(30);
+      setTitle("");
+      setDescription("");
+      setGenre("");
     }
   }, [show, mode, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const payload = {
+      date,
+      time,
+      capacity,
+      title,
+      description,
+      genre: genre ? (genre as Genre) : undefined,
+    };
+
     try {
       if (mode === "create") {
-        await createShow({ date, time, capacity });
+        await createShow(payload);
       } else {
-        await updateShow({ id: show.id, date, time, capacity });
+        await updateShow({ id: show.id, ...payload });
       }
       onSuccess();
     } catch (err) {
@@ -63,17 +92,64 @@ export default function ShowFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">{mode === "create" ? "Crear Show" : "Editar Show"}</DialogTitle>
+          <DialogTitle className="text-2xl">
+            {mode === "create" ? "Crear Show" : "Editar Show"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
+            <Label>Título</Label>
+            <Input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <Label>Descripción (opcional)</Label>
+            <Input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label>Género</Label>
+            <select
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              className="w-full border p-2 rounded"
+            >
+              <option value="">-- Selecciona un género --</option>
+              {genreOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
             <Label>Fecha</Label>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+            <Input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
           </div>
 
           <div>
             <Label>Horario</Label>
-            <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} required />
+            <Input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              required
+            />
           </div>
 
           <div>
