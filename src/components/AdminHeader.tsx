@@ -14,16 +14,19 @@ export function AdminHeader({ userName }: { userName: string }) {
   }
 
   return (
-    <header className="p-4 flex justify-between items-center bg-gray-100 shadow font-sans relative">
-      <h1 className="text-lg">Bienvenido, {userName}</h1>
-      <nav className="flex space-x-4 items-center">
-        <a href="/admin" className="text-blue-500 hover:underline">
+    <header className="p-4 flex justify-start items-center bg-gray-100 shadow font-sans relative">
+      <h1 className="text-lg">Bienvenido, {userName} { userName === "Julián" ? "👨" : "👩" }</h1>
+      <div className="flex-grow"></div>
+      
+      {/* Navigation links */}  
+      <nav className="flex space-x-4 items-center text-sm justify-end">
+        <a href="/admin" className="hover:text-gray-500">
           Inicio
         </a>
-        <a href="/admin/shows" className="text-blue-500 hover:underline">
+        <a href="/admin/shows" className="hover:text-gray-500">
           Shows
         </a>
-        <a href="/admin/reservations" className="text-blue-500 hover:underline">
+        <a href="/admin/reservations" className="hover:text-gray-500">
           Reservas
         </a>
 
@@ -33,24 +36,30 @@ export function AdminHeader({ userName }: { userName: string }) {
           onMouseEnter={() => setShowAccountingMenu(true)}
           onMouseLeave={() => setShowAccountingMenu(false)}
         >
-          <button className="text-blue-500 hover:underline">Contabilidad ▾</button>
+          <button className="hover:text-gray-500">Contabilidad ▾</button>
           {showAccountingMenu && (
-            <div className="absolute top-full left-0 mt-1 bg-white border rounded shadow text-sm z-10">
+            <div className="absolute top-full left-0 mt-1 text-gray-800 bg-white border rounded shadow z-10">
+              <a
+                href="/admin/accounting"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
+                Panel
+              </a>
               <a
                 href="/admin/accounting/income"
-                className="block px-4 py-2 hover:bg-gray-100 text-blue-600"
+                className="block px-4 py-2 hover:bg-gray-100"
               >
                 Ingresos
               </a>
               <a
                 href="/admin/accounting/expenses"
-                className="block px-4 py-2 hover:bg-gray-100 text-blue-600"
+                className="block px-4 py-2 hover:bg-gray-100"
               >
                 Egresos
               </a>
               <a
                 href="/admin/accounting/closures"
-                className="block px-4 py-2 hover:bg-gray-100 text-blue-600"
+                className="block px-4 py-2 hover:bg-gray-100"
               >
                 Cierres de caja
               </a>
@@ -58,10 +67,10 @@ export function AdminHeader({ userName }: { userName: string }) {
           )}
         </div>
 
-        <a href="/admin/tickets" className="text-blue-500 hover:underline">
+        <a href="/admin/tickets" className="hover:text-gray-500">
           Tickets
         </a>
-        <a href="/admin/users" className="text-blue-500 hover:underline">
+        <a href="/admin/users" className="hover:text-gray-500">
           Usuarios
         </a>
       </nav>
@@ -71,9 +80,9 @@ export function AdminHeader({ userName }: { userName: string }) {
           startTransition(() => signOut({ callbackUrl: "/admin/login" }))
         }
         disabled={isPending}
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        className="px-4 py-2 hover:text-gray-500"
       >
-        {isPending ? "Saliendo..." : "Salir"}
+        {isPending ? "Saliendo..." : "🏃‍♂️💨"}
       </button>
     </header>
   );
