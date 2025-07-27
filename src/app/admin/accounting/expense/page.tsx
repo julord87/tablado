@@ -154,7 +154,7 @@ export default function ExpensePage() {
   };
 
   return (
-    <div className="m-8 space-y-6">
+    <div className="m-8 space-y-2">
       <h2 className="text-2xl font-semibold mb-6">
         {getFormattedTitle(
           selectedDay ? new Date(selectedDay) : null,
@@ -187,7 +187,7 @@ export default function ExpensePage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-1 font-sans items-center">
+      <div className="flex gap-4 my-0 font-sans items-center">
         <Input
           type="date"
           value={selectedDay ?? ""}

@@ -122,49 +122,53 @@ export default function AdminDashboardPage() {
       {/* Últimos Movimientos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
         <Card>
-          <CardHeader>
-            <CardTitle>Últimos Ingresos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {lastIncomes.map((i) => (
-                <li key={i.id} className="text-sm">
-                  {new Date(i.date).toLocaleString("es-ES", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })}{" "}
-                  💰 {i.description} — € {i.amount}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
+          <Link href="/admin/accounting/income">
+            <CardHeader>
+              <CardTitle>Últimos Ingresos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {lastIncomes.map((i) => (
+                  <li key={i.id} className="text-sm">
+                    {new Date(i.date).toLocaleString("es-ES", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}{" "}
+                    💰 {i.description} — € {i.amount}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Link>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Últimos Egresos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {lastExpenses.map((e) => (
-                <li key={e.id} className="text-sm">
-                  {new Date(e.date).toLocaleString("es-ES", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })}{" "}
-                  📤 {e.description} — € {e.amount}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
+          <Link href="/admin/accounting/expense">
+            <CardHeader>
+              <CardTitle>Últimos Egresos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {lastExpenses.map((e) => (
+                  <li key={e.id} className="text-sm">
+                    {new Date(e.date).toLocaleString("es-ES", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}{" "}
+                    📤 {e.description} — € {e.amount}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Link>
         </Card>
       </div>
 
